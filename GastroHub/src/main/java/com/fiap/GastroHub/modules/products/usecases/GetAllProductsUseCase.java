@@ -2,6 +2,7 @@ package com.fiap.GastroHub.modules.products.usecases;
 
 import com.fiap.GastroHub.modules.products.dtos.ProductResponse;
 import com.fiap.GastroHub.modules.products.infra.orm.repositories.ProductRepository;
+import com.fiap.GastroHub.modules.users.dtos.UserResponse;
 import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import lombok.RequiredArgsConstructor;

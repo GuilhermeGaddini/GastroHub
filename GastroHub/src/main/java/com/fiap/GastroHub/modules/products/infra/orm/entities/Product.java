@@ -18,6 +18,9 @@ public class Product {
     private String name;
 
     @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
     private BigDecimal price;
 
     @Column(nullable = false, unique = true)
@@ -27,5 +30,6 @@ public class Product {
     private String picPath;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="restaurant_id")
     private Restaurant restaurant;
 }

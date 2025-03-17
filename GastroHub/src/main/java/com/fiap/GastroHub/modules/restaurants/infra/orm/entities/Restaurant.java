@@ -30,6 +30,6 @@ public class Restaurant {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private User owner;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Product> products;
 }

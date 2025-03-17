@@ -4,13 +4,12 @@ package com.fiap.GastroHub.modules.roles.infra.http;
 import com.fiap.GastroHub.modules.roles.dtos.AssignRoleRequest;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.usecases.*;
-import com.fiap.GastroHub.modules.users.dtos.LoginUserResponse;
+import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -129,10 +128,8 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description = "Erro Interno")
     })
     @PostMapping("/assign")
-    public ResponseEntity<Void> assignRoleToUser(@RequestBody AssignRoleRequest assignRoleRequest) {
-
-        String token = loginUserUseCase.execute(loginUserRequest);
-        LoginUserResponse response = new LoginUserResponse(token);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<User> assignRoleToUser(@RequestBody AssignRoleRequest assignRoleRequest) {
+        User user = assignRoleUseCase.execute(assignRoleRequest);
+        return ResponseEntity.ok(user);
     }
 }

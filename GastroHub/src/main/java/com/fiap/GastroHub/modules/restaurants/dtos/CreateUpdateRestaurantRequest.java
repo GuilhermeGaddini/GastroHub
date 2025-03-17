@@ -15,7 +15,10 @@ public class CreateUpdateRestaurantRequest {
     @NotBlank(message = "Cuisine type is required")
     private String cuisineType;
 
+    @NotBlank(message = "Opening hours is required")
+    private String openingHours;
+
     @NotBlank(message = "Owner ID is required")
-    private Long ownerId;
+    private Long owner;
 
 }

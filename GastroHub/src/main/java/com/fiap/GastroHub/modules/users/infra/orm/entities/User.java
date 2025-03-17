@@ -19,7 +19,7 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private BigDecimal address;
+    private String address;
 
     @Column(nullable = false, unique = true)
     private String email;

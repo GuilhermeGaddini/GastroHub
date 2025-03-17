@@ -11,5 +11,4 @@ public class ProductResponse {
     private BigDecimal price;
     private String availability;
     private String picPath;
-    private Restaurant restaurant;
 }

@@ -38,9 +38,9 @@ public class CreateProductUseCase {
 
         try {
             Product product = modelMapper.map(request, Product.class);
-            productRepository.save(product);
-            Restaurant restaurant = restaurantRepository.findById(request.getRestaurantId()).get();
+            Restaurant restaurant = restaurantRepository.findById(request.getRestaurant()).get();
             product.setRestaurant(restaurant);
+            productRepository.save(product);
 
             logger.info("New product created successfully");
             return modelMapper.map(product, ProductResponse.class);

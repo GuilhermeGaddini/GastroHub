@@ -7,7 +7,6 @@ import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
-import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -19,14 +18,10 @@ public class AssignRoleUseCase {
     private static final Logger logger = LogManager.getLogger(UpdateRoleUseCase.class);
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
-    private AesCryptoImp aesCrypto;
 
     public AssignRoleUseCase(RoleRepository roleRepository, UserRepository userRepository, ModelMapper modelMapper) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
-        this.aesCrypto = new AesCryptoImp();
     }
 
     /**

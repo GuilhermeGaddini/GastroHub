@@ -4,6 +4,7 @@ import com.fiap.GastroHub.modules.restaurants.dtos.CreateUpdateRestaurantRequest
 import com.fiap.GastroHub.modules.restaurants.dtos.RestaurantResponse;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.RestaurantRepository;
+import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.shared.AppException;
@@ -15,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +40,13 @@ public class CreateRestaurantUseCase {
 
         try {
             Restaurant restaurant = modelMapper.map(request, Restaurant.class);
+
+            User user = userRepository.findById(request.getOwner())
+                    .orElseThrow(() -> new AppException("Owner User not found", HttpStatus.NOT_FOUND));
+
+            restaurant.setOwner(user);
+
             restaurantRepository.save(restaurant);
-            User owner = userRepository.findById(request.getOwnerId()).get();
-            restaurant.setOwner(owner);
 
             logger.info("New restaurant created successfully");
             return modelMapper.map(restaurant, RestaurantResponse.class);
