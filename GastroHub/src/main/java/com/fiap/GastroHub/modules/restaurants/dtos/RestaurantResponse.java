@@ -1,5 +1,6 @@
 package com.fiap.GastroHub.modules.restaurants.dtos;
 
+import com.fiap.GastroHub.modules.users.dtos.UserResponse;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import lombok.*;
 
@@ -11,5 +12,5 @@ public class RestaurantResponse {
     private String email;
     private String cuisineType;
     private String openingHours;
-    private User owner;
+    private UserResponse owner;
 }
