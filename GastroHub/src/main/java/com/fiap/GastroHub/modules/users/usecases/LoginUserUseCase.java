@@ -32,7 +32,7 @@ public class LoginUserUseCase {
     public String execute(LoginUserRequest loginUserRequest) {
         logger.info("Iniciando o processo de login para o email: {}", loginUserRequest.getEmail());
 
-        User user = userRepository.findUserByEmail(loginUserRequest.getEmail())
+        User user = userRepository.findByEmail(loginUserRequest.getEmail())
                 .orElseThrow(() -> new AppException("Usuário não encontrado", HttpStatus.NOT_FOUND));
 
         logger.info("Usuário encontrado: {}", user.getName());
