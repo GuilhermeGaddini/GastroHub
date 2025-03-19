@@ -1,8 +1,8 @@
 package com.fiap.GastroHub.modules.restaurants.usecases;
 
 import com.fiap.GastroHub.modules.restaurants.dtos.RestaurantResponse;
+import com.fiap.GastroHub.modules.restaurants.exceptions.RestaurantException;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.RestaurantRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,7 +30,7 @@ public class GetAllRestaurantsUseCase {
                     .map(restaurant -> modelMapper.map(restaurant, RestaurantResponse.class))
                     .collect(Collectors.toList());
         } catch (Error e) {
-            throw new AppException("Error fetching restaurants", HttpStatus.BAD_REQUEST);
+            throw new RestaurantException("Error fetching restaurants", HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.fiap.GastroHub.modules.users.usecases;
 
 import com.fiap.GastroHub.modules.users.dtos.ChangeUserPasswordRequest;
+import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +56,7 @@ public class ChangeUserPasswordUseCase {
 
            logger.info("Password updated successfully");
        } catch (Exception e) {
-           throw new AppException(String.format("Failed to update user with id %d", id), HttpStatus.INTERNAL_SERVER_ERROR);
+           throw new UserException(String.format("Failed to update user with id %d", id), HttpStatus.INTERNAL_SERVER_ERROR);
        }
 
     }

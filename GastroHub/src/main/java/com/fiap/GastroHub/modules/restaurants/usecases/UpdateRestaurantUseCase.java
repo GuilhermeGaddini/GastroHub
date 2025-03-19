@@ -2,11 +2,10 @@ package com.fiap.GastroHub.modules.restaurants.usecases;
 
 import com.fiap.GastroHub.modules.restaurants.dtos.CreateUpdateRestaurantRequest;
 import com.fiap.GastroHub.modules.restaurants.dtos.RestaurantResponse;
+import com.fiap.GastroHub.modules.restaurants.exceptions.RestaurantException;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.RestaurantRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
-import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -36,7 +35,7 @@ public class UpdateRestaurantUseCase {
         logger.info("Trying to update a restaurant with the following id: {}", id);
 
         Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new AppException("Restaurant not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RestaurantException("Restaurant not found", HttpStatus.NOT_FOUND));
 
         modelMapper.map(request, restaurant);
         restaurant = restaurantRepository.save(restaurant);

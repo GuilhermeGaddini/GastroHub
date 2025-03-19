@@ -1,8 +1,8 @@
 package com.fiap.GastroHub.modules.roles.usecases;
 
+import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class CreateRoleUseCase {
             return role;
         } catch (Exception e) {
             logger.error("Unexpected error: {}", e.getMessage(), e);
-            throw new AppException("An unexpected error occurred while creating the role.", HttpStatus.BAD_REQUEST);
+            throw new RoleException("An unexpected error occurred while creating the role.", HttpStatus.BAD_REQUEST);
         }
     }
 }

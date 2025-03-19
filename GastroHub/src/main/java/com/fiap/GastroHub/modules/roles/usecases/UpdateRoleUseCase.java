@@ -1,8 +1,8 @@
 package com.fiap.GastroHub.modules.roles.usecases;
 
+import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +16,7 @@ public class UpdateRoleUseCase {
     private static final Logger logger = LogManager.getLogger(UpdateRoleUseCase.class);
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
-    private AesCryptoImp aesCrypto;
+    private final AesCryptoImp aesCrypto;
 
     public UpdateRoleUseCase(RoleRepository roleRepository, ModelMapper modelMapper) {
         this.roleRepository = roleRepository;
@@ -36,7 +36,7 @@ public class UpdateRoleUseCase {
         logger.info("Trying to update a role with the following id: {}", id);
 
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new AppException("Role not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RoleException("Role not found", HttpStatus.NOT_FOUND));
 
         role = roleRepository.save(role);
         return role;

@@ -1,7 +1,6 @@
 package com.fiap.GastroHub.modules.restaurants.dtos;
 
 import com.fiap.GastroHub.modules.users.dtos.UserResponse;
-import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import lombok.*;
 
 @Data
