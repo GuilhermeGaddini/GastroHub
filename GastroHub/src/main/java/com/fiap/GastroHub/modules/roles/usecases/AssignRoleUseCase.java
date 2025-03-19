@@ -9,17 +9,16 @@ import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AssignRoleUseCase {
-    private static final Logger logger = LogManager.getLogger(UpdateRoleUseCase.class);
+    private static final Logger logger = LogManager.getLogger(AssignRoleUseCase.class);
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
 
-    public AssignRoleUseCase(RoleRepository roleRepository, UserRepository userRepository, ModelMapper modelMapper) {
+    public AssignRoleUseCase(RoleRepository roleRepository, UserRepository userRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
     }
@@ -32,7 +31,7 @@ public class AssignRoleUseCase {
      **/
     @LogBean
     public User execute(AssignRoleRequest request) {
-        logger.info("Trying to assing the role with id {} to the user with is {}", request.getRoleId(), request.getUserId());
+        logger.info("Trying to assign the role with id {} to the user with is {}", request.getRoleId(), request.getUserId());
 
         Role role = roleRepository.findById(request.getRoleId())
                 .orElseThrow(() -> new RoleException("Role not found", HttpStatus.NOT_FOUND));

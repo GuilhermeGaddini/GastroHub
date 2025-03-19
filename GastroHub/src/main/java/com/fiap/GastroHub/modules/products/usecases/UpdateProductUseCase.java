@@ -6,7 +6,6 @@ import com.fiap.GastroHub.modules.products.exceptions.ProductException;
 import com.fiap.GastroHub.modules.products.infra.orm.entities.Product;
 import com.fiap.GastroHub.modules.products.infra.orm.repositories.ProductRepository;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
-import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;

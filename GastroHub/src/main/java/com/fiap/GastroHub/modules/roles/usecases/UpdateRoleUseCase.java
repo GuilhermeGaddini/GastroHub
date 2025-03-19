@@ -16,7 +16,7 @@ public class UpdateRoleUseCase {
     private static final Logger logger = LogManager.getLogger(UpdateRoleUseCase.class);
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
-    private AesCryptoImp aesCrypto;
+    private final AesCryptoImp aesCrypto;
 
     public UpdateRoleUseCase(RoleRepository roleRepository, ModelMapper modelMapper) {
         this.roleRepository = roleRepository;

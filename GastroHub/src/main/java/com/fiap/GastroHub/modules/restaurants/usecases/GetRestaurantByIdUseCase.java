@@ -20,7 +20,7 @@ public class GetRestaurantByIdUseCase {
      * Executes the get restaurant use case
      *
      * @param id Restaurant's id
-     * @return An objetc containing the restaurant's information
+     * @return An object containing the restaurant's information
      **/
     @LogBean
     public RestaurantResponse execute(Long id) {

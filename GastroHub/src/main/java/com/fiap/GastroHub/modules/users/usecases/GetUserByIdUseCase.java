@@ -20,7 +20,7 @@ public class GetUserByIdUseCase {
      * Executes the get user use case
      *
      * @param id User's id
-     * @return An objetc containing the user's information
+     * @return An object containing the user's information
      **/
     @LogBean
     public UserResponse execute(Long id) {

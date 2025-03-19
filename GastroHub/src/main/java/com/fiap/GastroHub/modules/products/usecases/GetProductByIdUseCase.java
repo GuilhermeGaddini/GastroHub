@@ -20,7 +20,7 @@ public class GetProductByIdUseCase {
      * Executes the get product use case
      *
      * @param id Product's id
-     * @return An objetc containing the product's information
+     * @return An object containing the product's information
      **/
     @LogBean
     public ProductResponse execute(Long id) {

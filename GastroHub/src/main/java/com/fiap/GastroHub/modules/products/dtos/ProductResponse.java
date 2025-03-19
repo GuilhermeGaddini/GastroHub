@@ -1,6 +1,5 @@
 package com.fiap.GastroHub.modules.products.dtos;
 
-import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
 import lombok.*;
 
 import java.math.BigDecimal;
