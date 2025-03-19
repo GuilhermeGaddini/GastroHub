@@ -1,9 +1,8 @@
 package com.fiap.GastroHub.modules.products.usecases;
 
 import com.fiap.GastroHub.modules.products.dtos.ProductResponse;
+import com.fiap.GastroHub.modules.products.exceptions.ProductException;
 import com.fiap.GastroHub.modules.products.infra.orm.repositories.ProductRepository;
-import com.fiap.GastroHub.modules.users.dtos.UserResponse;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,7 +30,7 @@ public class GetAllProductsUseCase {
                     .map(product -> modelMapper.map(product, ProductResponse.class))
                     .collect(Collectors.toList());
         } catch (Error e) {
-            throw new AppException("Error fetching products", HttpStatus.BAD_REQUEST);
+            throw new ProductException("Error fetching products", HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.fiap.GastroHub.modules.roles.usecases;
 
+import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,7 +24,7 @@ public class GetRoleByIdUseCase {
     @LogBean
     public Role execute(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new AppException("Role not found", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new RoleException("Role not found", HttpStatus.BAD_REQUEST));
         return role;
     }
 

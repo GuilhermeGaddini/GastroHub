@@ -2,11 +2,11 @@ package com.fiap.GastroHub.modules.products.usecases;
 
 import com.fiap.GastroHub.modules.products.dtos.CreateUpdateProductRequest;
 import com.fiap.GastroHub.modules.products.dtos.ProductResponse;
+import com.fiap.GastroHub.modules.products.exceptions.ProductException;
 import com.fiap.GastroHub.modules.products.infra.orm.entities.Product;
 import com.fiap.GastroHub.modules.products.infra.orm.repositories.ProductRepository;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.RestaurantRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class CreateProductUseCase {
             return modelMapper.map(product, ProductResponse.class);
         } catch (Exception e) {
             logger.error("Unexpected error: {}", e.getMessage(), e);
-            throw new AppException("An unexpected error occurred while creating the product.", HttpStatus.BAD_REQUEST);
+            throw new ProductException("An unexpected error occurred while creating the product.", HttpStatus.BAD_REQUEST);
         }
     }
 }

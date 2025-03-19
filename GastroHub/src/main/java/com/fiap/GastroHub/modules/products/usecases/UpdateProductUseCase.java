@@ -2,9 +2,9 @@ package com.fiap.GastroHub.modules.products.usecases;
 
 import com.fiap.GastroHub.modules.products.dtos.CreateUpdateProductRequest;
 import com.fiap.GastroHub.modules.products.dtos.ProductResponse;
+import com.fiap.GastroHub.modules.products.exceptions.ProductException;
 import com.fiap.GastroHub.modules.products.infra.orm.entities.Product;
 import com.fiap.GastroHub.modules.products.infra.orm.repositories.ProductRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +36,7 @@ public class UpdateProductUseCase {
         logger.info("Trying to update a product with the following id: {}", id);
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new AppException("Product not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ProductException("Product not found", HttpStatus.NOT_FOUND));
 
         modelMapper.map(request, product);
         product = productRepository.save(product);

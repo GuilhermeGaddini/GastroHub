@@ -1,8 +1,6 @@
 package com.fiap.GastroHub.shared.infra.http.handlers;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fiap.GastroHub.shared.AppException;
-import com.fiap.GastroHub.shared.ErrorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.core.Ordered;
@@ -25,12 +23,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     private static class JsonResponse {
         public String errorMessage;
         public int errorCode;
-    }
-
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<ErrorResponse> handleAppException(AppException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatusCode().value());
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

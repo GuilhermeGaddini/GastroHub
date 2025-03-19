@@ -2,12 +2,11 @@ package com.fiap.GastroHub.modules.restaurants.usecases;
 
 import com.fiap.GastroHub.modules.restaurants.dtos.CreateUpdateRestaurantRequest;
 import com.fiap.GastroHub.modules.restaurants.dtos.RestaurantResponse;
+import com.fiap.GastroHub.modules.restaurants.exceptions.RestaurantException;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.RestaurantRepository;
-import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +39,7 @@ public class CreateRestaurantUseCase {
             Restaurant restaurant = modelMapper.map(request, Restaurant.class);
 
             User user = userRepository.findById(request.getOwner())
-                    .orElseThrow(() -> new AppException("Owner User not found", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new RestaurantException("Owner User not found", HttpStatus.NOT_FOUND));
 
             restaurant.setOwner(user);
 
@@ -52,7 +49,7 @@ public class CreateRestaurantUseCase {
             return modelMapper.map(restaurant, RestaurantResponse.class);
         } catch (Exception e) {
             logger.error("Unexpected error: {}", e.getMessage(), e);
-            throw new AppException("An unexpected error occurred while creating the restaurant.", HttpStatus.BAD_REQUEST);
+            throw new RestaurantException("An unexpected error occurred while creating the restaurant.", HttpStatus.BAD_REQUEST);
         }
     }
 }

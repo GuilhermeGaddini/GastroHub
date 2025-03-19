@@ -2,9 +2,9 @@ package com.fiap.GastroHub.modules.users.usecases;
 
 import com.fiap.GastroHub.modules.users.dtos.CreateUpdateUserRequest;
 import com.fiap.GastroHub.modules.users.dtos.UserResponse;
+import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import jakarta.transaction.Transactional;
@@ -45,7 +45,7 @@ public class CreateUserUseCase {
             return modelMapper.map(user, UserResponse.class);
         } catch (Exception e) {
             logger.error("Unexpected error: {}", e.getMessage(), e);
-            throw new AppException("An unexpected error occurred while creating the user.", HttpStatus.BAD_REQUEST);
+            throw new UserException("An unexpected error occurred while creating the user.", HttpStatus.BAD_REQUEST);
         }
     }
 }

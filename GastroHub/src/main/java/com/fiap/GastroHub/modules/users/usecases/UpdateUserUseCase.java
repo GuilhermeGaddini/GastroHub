@@ -2,9 +2,9 @@ package com.fiap.GastroHub.modules.users.usecases;
 
 import com.fiap.GastroHub.modules.users.dtos.CreateUpdateUserRequest;
 import com.fiap.GastroHub.modules.users.dtos.UserResponse;
+import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +38,7 @@ public class UpdateUserUseCase {
         logger.info("Trying to update a user with the following id: {}", id);
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new UserException("User not found", HttpStatus.NOT_FOUND));
 
         modelMapper.map(request, user);
         user = userRepository.save(user);

@@ -1,10 +1,10 @@
 package com.fiap.GastroHub.modules.users.usecases;
 
 import com.fiap.GastroHub.modules.users.dtos.LoginUserRequest;
+import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.util.JwtUtil;
-import com.fiap.GastroHub.shared.AppException;
 import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +33,7 @@ public class LoginUserUseCase {
         logger.info("Iniciando o processo de login para o email: {}", loginUserRequest.getEmail());
 
         User user = userRepository.findByEmail(loginUserRequest.getEmail())
-                .orElseThrow(() -> new AppException("Usuário não encontrado", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new UserException("Usuário não encontrado", HttpStatus.NOT_FOUND));
 
         logger.info("Usuário encontrado: {}", user.getName());
 
@@ -43,7 +43,7 @@ public class LoginUserUseCase {
             logger.info("Token gerado com sucesso para o usuário: {}", user.getName());
             return jwtUtil.generateToken(user.getId(), user.getName(), user.getEmail());
         } else {
-            throw new AppException("Usuário ou senha inválidos", HttpStatus.UNAUTHORIZED);
+            throw new UserException("Usuário ou senha inválidos", HttpStatus.UNAUTHORIZED);
         }
     }
 }
