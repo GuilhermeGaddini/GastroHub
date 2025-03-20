@@ -1,5 +1,6 @@
 package com.fiap.GastroHub.modules.roles.usecases;
 
+import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
@@ -32,7 +33,7 @@ public class UpdateRoleUseCase {
      * @return An object confirming the role's changed information
      **/
     @LogBean
-    public Role execute(Long id, Role request) {
+    public Role execute(Long id, CreateUpdateRoleRequest request) {
         logger.info("Trying to update a role with the following id: {}", id);
 
         Role role = roleRepository.findById(id)

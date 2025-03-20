@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = RoleController.class)
-class RoleControllerTest {
+class RoleControllerTestBackup {
 
     @Autowired
     private MockMvc mockMvc;
@@ -102,7 +102,7 @@ class RoleControllerTest {
 
     @Test
     void updateRole_ShouldReturnUpdatedRole() throws Exception {
-        Role request = new Role();
+        CreateUpdateRoleRequest request = new CreateUpdateRoleRequest();
         request.setName("UPDATED_ADMIN");
 
         Role updatedRole = new Role();

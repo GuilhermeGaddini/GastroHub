@@ -1,4 +1,5 @@
 package com.fiap.GastroHub.roles.service;
+import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
@@ -26,7 +27,7 @@ class UpdateRoleUseCaseTest {
     private UpdateRoleUseCase updateRoleUseCase;
 
     private Role existingRole;
-    private Role updateRequest;
+    private CreateUpdateRoleRequest updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -34,7 +35,7 @@ class UpdateRoleUseCaseTest {
         existingRole = new Role(1L, "Admin");
 
         // Mock da Role com as novas informações para atualização
-        updateRequest = new Role(null, "Super Admin");
+        updateRequest = new CreateUpdateRoleRequest("Super Admin");
     }
 
     @Test
