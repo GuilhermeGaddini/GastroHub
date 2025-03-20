@@ -38,6 +38,7 @@ public class ProductControllerTest {
     @Test
     @DisplayName("Should create a product successfully")
     public void testCreateProductSuccess() {
+        // Criação dos objetos necessários
         CreateUpdateProductRequest createProductRequest = new CreateUpdateProductRequest(
                 "Produto 1",
                 "Descrição do produto",
