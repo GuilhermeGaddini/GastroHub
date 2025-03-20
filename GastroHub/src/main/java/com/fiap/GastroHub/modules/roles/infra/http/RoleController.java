@@ -9,6 +9,7 @@ import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class RoleController {
     })
     @PostMapping("/create")
     public ResponseEntity<Role> createRole(
-            @RequestBody CreateUpdateRoleRequest request
+            @Valid @RequestBody CreateUpdateRoleRequest request
     ) {
         Role createdRole = createRoleUseCase.execute(request);
         return ResponseEntity.ok(createdRole);

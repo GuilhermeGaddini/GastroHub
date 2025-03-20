@@ -1,15 +1,14 @@
 package com.fiap.GastroHub.modules.roles.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUpdateRoleRequest {
+    @NotBlank(message = "Name can not be empty")
     private String name;
 }

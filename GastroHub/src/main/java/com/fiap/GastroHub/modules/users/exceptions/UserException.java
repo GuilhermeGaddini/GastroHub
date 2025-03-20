@@ -1,14 +1,13 @@
 package com.fiap.GastroHub.modules.users.exceptions;
 
+import com.fiap.GastroHub.shared.exception.GastroHubException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class UserException extends RuntimeException {
-    private String message;
-    private HttpStatus statusCode;
+public class UserException extends GastroHubException {
+    public UserException(String message, HttpStatus status) {
+        super(message, status);
+    }
 }
