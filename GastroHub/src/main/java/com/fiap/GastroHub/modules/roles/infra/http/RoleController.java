@@ -2,6 +2,7 @@ package com.fiap.GastroHub.modules.roles.infra.http;
 
 
 import com.fiap.GastroHub.modules.roles.dtos.AssignRoleRequest;
+import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.usecases.*;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
@@ -51,7 +52,7 @@ public class RoleController {
     })
     @PostMapping("/create")
     public ResponseEntity<Role> createRole(
-            @RequestBody Role request
+            @RequestBody CreateUpdateRoleRequest request
     ) {
         Role createdRole = createRoleUseCase.execute(request);
         return ResponseEntity.ok(createdRole);

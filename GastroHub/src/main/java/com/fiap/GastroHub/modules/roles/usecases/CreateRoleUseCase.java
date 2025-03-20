@@ -1,5 +1,6 @@
 package com.fiap.GastroHub.modules.roles.usecases;
 
+import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
@@ -28,7 +29,7 @@ public class CreateRoleUseCase {
      **/
     @LogBean
     @Transactional
-    public Role execute(Role request) {
+    public Role execute(CreateUpdateRoleRequest request) {
         logger.info("Trying to create a new role with the following info: {}", request.getName());
 
         try {

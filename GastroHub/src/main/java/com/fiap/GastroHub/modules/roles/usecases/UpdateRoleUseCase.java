@@ -38,6 +38,8 @@ public class UpdateRoleUseCase {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RoleException("Role not found", HttpStatus.NOT_FOUND));
 
+        role.setName(request.getName());
+
         role = roleRepository.save(role);
         return role;
     }
