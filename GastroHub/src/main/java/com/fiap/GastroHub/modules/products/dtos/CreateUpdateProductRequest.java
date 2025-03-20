@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 
 @Data
+@AllArgsConstructor
 public class CreateUpdateProductRequest {
     @NotBlank(message = "Name is required")
     private String name;

@@ -5,6 +5,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
 public class ProductResponse {
     private String name;
     private BigDecimal price;
