@@ -1,5 +1,4 @@
 package com.fiap.GastroHub.roles.service;
-
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
@@ -9,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GetAllRolesUseCaseTest {
+class GetAllRolesUseCaseTest {
 
     @Mock
     private RoleRepository roleRepository;
@@ -27,42 +26,43 @@ public class GetAllRolesUseCaseTest {
     @InjectMocks
     private GetAllRolesUseCase getAllRolesUseCase;
 
-    private List<Role> roles;
+    private List<Role> mockRoles;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        Role role1 = new Role();
-        role1.setId(1L);
-        role1.setName("Admin");
-
-        Role role2 = new Role();
-        role2.setId(2L);
-        role2.setName("User");
-
-        roles = Arrays.asList(role1, role2);
+        // Criação de uma lista mockada de Roles
+        mockRoles = Arrays.asList(
+                new Role(1L, "Admin"),
+                new Role(2L, "User"),
+                new Role(3L, "Manager")
+        );
     }
 
     @Test
-    void execute_RolesExist_ReturnsListOfRoles() {
-        when(roleRepository.findAll()).thenReturn(roles);
+    void execute_ReturnsListOfRoles() {
+        // Configuração do mock para o método findAll
+        when(roleRepository.findAll()).thenReturn(mockRoles);
 
+        // Execução do método
         List<Role> result = getAllRolesUseCase.execute();
 
+        // Verificações
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
         assertEquals("Admin", result.get(0).getName());
-        assertEquals("User", result.get(1).getName());
         verify(roleRepository, times(1)).findAll();
     }
 
     @Test
-    void execute_RepositoryThrowsException_ThrowsRoleException() {
+    void execute_ThrowsRoleExceptionOnError() {
+        // Configuração do mock para lançar um erro
         when(roleRepository.findAll()).thenThrow(new RuntimeException("Database error"));
 
+        // Execução do método e verificação da exceção
         RoleException exception = assertThrows(RoleException.class, () -> getAllRolesUseCase.execute());
 
         assertEquals("Error fetching roles", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verify(roleRepository, times(1)).findAll();
     }
 }

@@ -1,18 +1,15 @@
 package com.fiap.GastroHub.roles.service;
-
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import com.fiap.GastroHub.modules.roles.usecases.UpdateRoleUseCase;
-import com.fiap.GastroHub.shared.infra.crypto.AesCryptoImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -20,62 +17,56 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateRoleUseCaseTest {
+class UpdateRoleUseCaseTest {
 
     @Mock
     private RoleRepository roleRepository;
-
-    @Mock
-    private ModelMapper modelMapper;
-
-    @Mock
-    private AesCryptoImp aesCrypto; // Embora não esteja sendo usado no código fornecido, mantive a declaração
 
     @InjectMocks
     private UpdateRoleUseCase updateRoleUseCase;
 
     private Role existingRole;
-    private Role updatedRoleRequest;
+    private Role updateRequest;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        // Mock da Role existente no banco
+        existingRole = new Role(1L, "Admin");
 
-        existingRole = new Role();
-        existingRole.setId(1L);
-        existingRole.setName("Old Admin");
-
-        updatedRoleRequest = new Role();
-        updatedRoleRequest.setName("New Admin");
+        // Mock da Role com as novas informações para atualização
+        updateRequest = new Role(null, "Super Admin");
     }
 
     @Test
-    void execute_ValidIdAndRequest_UpdatesAndReturnsRole() {
-        var role = new Role();
-        role.setId(Long.valueOf(1));
-        role.setName("New Admin");
-
-        when(roleRepository.findById(role.getId())).thenReturn(Optional.of(existingRole));
+    void execute_ValidIdAndRequest_UpdatesRole() {
+        // Configuração do mock para retornar a Role existente
+        when(roleRepository.findById(existingRole.getId())).thenReturn(Optional.of(existingRole));
         when(roleRepository.save(existingRole)).thenReturn(existingRole);
 
-        Role result = updateRoleUseCase.execute(1L, updatedRoleRequest);
+        // Execução do método
+        Role result = updateRoleUseCase.execute(existingRole.getId(), updateRequest);
 
+        // Verificações
         assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("New Admin", result.getName());
-
-        verify(roleRepository, times(1)).findById(1L);
+        assertEquals(existingRole.getId(), result.getId());
+        assertEquals(updateRequest.getName(), result.getName());
+        verify(roleRepository, times(1)).findById(existingRole.getId());
         verify(roleRepository, times(1)).save(existingRole);
     }
 
     @Test
-    void execute_RoleNotFound_ThrowsRoleException() {
-        when(roleRepository.findById(1L)).thenReturn(Optional.empty());
+    void execute_InvalidId_ThrowsRoleException() {
+        Long invalidId = 999L;
 
-        RoleException exception = assertThrows(RoleException.class, () -> updateRoleUseCase.execute(1L, updatedRoleRequest));
+        // Configuração do mock para retornar vazio (Role não encontrada)
+        when(roleRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // Execução do método e verificação da exceção
+        RoleException exception = assertThrows(RoleException.class, () -> updateRoleUseCase.execute(invalidId, updateRequest));
 
         assertEquals("Role not found", exception.getMessage());
-        verify(roleRepository, times(1)).findById(1L);
-        verify(roleRepository, never()).save(any(Role.class));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        verify(roleRepository, times(1)).findById(invalidId);
+        verify(roleRepository, never()).save(any());
     }
 }

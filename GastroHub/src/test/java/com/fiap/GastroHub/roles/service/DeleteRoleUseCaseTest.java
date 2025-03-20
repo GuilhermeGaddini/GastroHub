@@ -4,13 +4,12 @@ import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import com.fiap.GastroHub.modules.roles.usecases.DeleteRoleUseCase;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -26,34 +25,31 @@ public class DeleteRoleUseCaseTest {
     @InjectMocks
     private DeleteRoleUseCase deleteRoleUseCase;
 
-    private Role role;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        role = new Role();
-        role.setId(1L);
-        role.setName("Admin");
-    }
-
     @Test
     void execute_ValidId_DeletesRole() {
-        when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
-        doNothing().when(roleRepository).delete(role);
+        Long roleId = 1L;
+        Role role = new Role();
+        role.setId(roleId);
 
-        assertDoesNotThrow(() -> deleteRoleUseCase.execute(1L));
-        verify(roleRepository, times(1)).findById(1L);
+        when(roleRepository.findById(roleId)).thenReturn(Optional.of(role));
+
+        deleteRoleUseCase.execute(roleId);
+
+        verify(roleRepository, times(1)).findById(roleId);
         verify(roleRepository, times(1)).delete(role);
     }
 
     @Test
-    void execute_RoleNotFound_ThrowsRoleException() {
-        when(roleRepository.findById(1L)).thenReturn(Optional.empty());
+    void execute_InvalidId_ThrowsRoleException() {
+        Long invalidId = 999L;
 
-        RoleException exception = assertThrows(RoleException.class, () -> deleteRoleUseCase.execute(1L));
+        when(roleRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        assertEquals("Role with ID 1 not found", exception.getMessage());
-        verify(roleRepository, times(1)).findById(1L);
-        verify(roleRepository, never()).delete(any(Role.class));
+        RoleException exception = assertThrows(RoleException.class, () -> deleteRoleUseCase.execute(invalidId));
+
+        assertEquals("Role with ID " + invalidId + " not found", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(roleRepository, times(1)).findById(invalidId);
+        verify(roleRepository, never()).delete(any());
     }
 }

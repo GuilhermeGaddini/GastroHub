@@ -47,7 +47,7 @@ public class ChangeUserPasswordUseCase {
 
                    userRepository.save(userFromDb);
                }else{
-                   throw new RuntimeException("Password does not match");
+                   throw new UserException("Password does not match", HttpStatus.UNAUTHORIZED);
                }
 
            } else {
@@ -55,6 +55,9 @@ public class ChangeUserPasswordUseCase {
            }
 
            logger.info("Password updated successfully");
+       }catch (UserException e) {
+           // Exceções específicas
+           throw e;
        } catch (Exception e) {
            throw new UserException(String.format("Failed to update user with id %d", id), HttpStatus.INTERNAL_SERVER_ERROR);
        }

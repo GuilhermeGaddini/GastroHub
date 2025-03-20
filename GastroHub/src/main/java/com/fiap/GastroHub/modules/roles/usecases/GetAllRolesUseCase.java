@@ -24,7 +24,7 @@ public class GetAllRolesUseCase {
     public List<Role> execute() {
         try {
             return roleRepository.findAll().stream().toList();
-        } catch (Error e) {
+        } catch (RuntimeException e) {
             throw new RoleException("Error fetching roles", HttpStatus.BAD_REQUEST);
         }
     }

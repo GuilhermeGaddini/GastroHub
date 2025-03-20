@@ -1,5 +1,4 @@
 package com.fiap.GastroHub.roles.service;
-
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
@@ -9,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class GetRoleByIdUseCaseTest {
+class GetRoleByIdUseCaseTest {
 
     @Mock
     private RoleRepository roleRepository;
@@ -26,35 +25,40 @@ public class GetRoleByIdUseCaseTest {
     @InjectMocks
     private GetRoleByIdUseCase getRoleByIdUseCase;
 
-    private Role role;
+    private Role mockRole;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        role = new Role();
-        role.setId(1L);
-        role.setName("Admin");
+        mockRole = new Role(1L, "Admin");
     }
 
     @Test
     void execute_ValidId_ReturnsRole() {
-        when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
+        // Configuração do mock
+        when(roleRepository.findById(mockRole.getId())).thenReturn(Optional.of(mockRole));
 
-        Role result = getRoleByIdUseCase.execute(1L);
+        // Execução do método
+        Role result = getRoleByIdUseCase.execute(mockRole.getId());
 
+        // Verificações
         assertNotNull(result);
-        assertEquals(role.getId(), result.getId());
-        assertEquals(role.getName(), result.getName());
-        verify(roleRepository, times(1)).findById(1L);
+        assertEquals(mockRole.getId(), result.getId());
+        assertEquals(mockRole.getName(), result.getName());
+        verify(roleRepository, times(1)).findById(mockRole.getId());
     }
 
     @Test
-    void execute_RoleNotFound_ThrowsRoleException() {
-        when(roleRepository.findById(1L)).thenReturn(Optional.empty());
+    void execute_InvalidId_ThrowsRoleException() {
+        Long invalidId = 999L;
 
-        RoleException exception = assertThrows(RoleException.class, () -> getRoleByIdUseCase.execute(1L));
+        // Configuração do mock para retornar vazio
+        when(roleRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // Execução do método e verificação da exceção
+        RoleException exception = assertThrows(RoleException.class, () -> getRoleByIdUseCase.execute(invalidId));
 
         assertEquals("Role not found", exception.getMessage());
-        verify(roleRepository, times(1)).findById(1L);
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(roleRepository, times(1)).findById(invalidId);
     }
 }
