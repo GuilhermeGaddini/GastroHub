@@ -2,12 +2,15 @@ package com.fiap.GastroHub.modules.roles.infra.http;
 
 
 import com.fiap.GastroHub.modules.roles.dtos.AssignRoleRequest;
+import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.usecases.*;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +54,7 @@ public class RoleController {
     })
     @PostMapping("/create")
     public ResponseEntity<Role> createRole(
-            @RequestBody Role request
+            @Valid @RequestBody CreateUpdateRoleRequest request
     ) {
         Role createdRole = createRoleUseCase.execute(request);
         return ResponseEntity.ok(createdRole);
@@ -98,7 +101,7 @@ public class RoleController {
     @PutMapping("/{id}")
     public ResponseEntity<Role> updateRole(
             @PathVariable("id") Long id,
-            @RequestBody Role request
+            @Valid @RequestBody CreateUpdateRoleRequest request
     ) {
         logger.info("PUT -> /roles/{}", id);
         Role updatedRole = updateRoleUseCase.execute(id, request);
