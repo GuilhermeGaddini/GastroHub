@@ -22,10 +22,20 @@ Sistema de gestão de operações para restaurantes com funcionalidades para cli
 - [Contribuição](#-contribuição)
 - [Licença](#-licença)
 - [Contato](#-contato)
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 🚀 Sobre o Projeto
 
 GastroHub é uma solução completa desenvolvida durante o curso de Pós-Graduação em Arquitetura e Desenvolvimento Java da FIAP. O projeto demonstra a aplicação prática de padrões de arquitetura, boas práticas de desenvolvimento e tecnologias modernas do ecossistema Java.
+\
+&nbsp;
+\
+&nbsp;
+
 
 ### 🎯 Objetivo Acadêmico
 
@@ -35,6 +45,11 @@ Este projeto serve como aplicação prática dos conceitos aprendidos durante o 
 - Clean Code
 - DevOps e Containerização
 - APIs RESTful
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 🛠️ Tecnologias
 
@@ -43,6 +58,11 @@ Este projeto serve como aplicação prática dos conceitos aprendidos durante o 
 - ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
 - ![Docker](https://img.shields.io/badge/Docker-latest-blue)
 - ![Maven](https://img.shields.io/badge/Maven-3.8.4-red)
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## ✨ Funcionalidades
 
@@ -57,6 +77,11 @@ Este projeto serve como aplicação prática dos conceitos aprendidos durante o 
 - Realização de pedidos online
 - Sistema de avaliações
 - Reserva de mesas
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 🏃‍♂️ Começando
 
@@ -85,8 +110,6 @@ Pelo console execute o comando `mvn clean install`.
 Isso irá compilar a aplicação e criar o arquivo `sgr/target/sgr-0.0.1.jar` necessario para build do container da aplicação.
 \
 &nbsp;
-\
-&nbsp;
 
 #### Comandos para rodar a aplicação
 Para iniciar todos os containers e acessar a aplicação: `docker-compose up`.
@@ -102,8 +125,7 @@ Por default o arquivo docker-compose.yaml será utilizado. Que faz:
     1. Cria um entrypoint com o comando de execução da aplicação.
 \
 &nbsp;
-\
-&nbsp;
+
 
 #### Exemplos:
 Execução do comando de inicialização:
@@ -117,8 +139,7 @@ Teste da aplicação:
 ![teste2](./doc_resources/teste2.png)
 \
 &nbsp;
-\
-&nbsp;
+
 
 #### Comandos para parar a aplicação
 Normalmente todos os containers provisionados são encerrados sem problemas com execução do comando `docker-compose down` no diretório em que o arquivo `docker-compose.yaml` está. 
@@ -163,6 +184,11 @@ docker-compose logs -f
 # Verificar status dos containers
 docker ps
 ```
+\
+&nbsp;
+\
+&nbsp;
+
 
 ### 4️⃣ Configuração do Banco de Dados
 
@@ -175,6 +201,11 @@ Para acessar o MySQL via terminal:
 ```bash
 docker exec -it gastrohub-mysql mysql -uroot -proot
 ```
+\
+&nbsp;
+\
+&nbsp;
+
 
 ### 4️⃣ Executando o Projeto
 
@@ -189,6 +220,11 @@ cd gastrohub
 ```
 
 O aplicativo estará disponível em `http://localhost:8080`
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 📚 Documentação da API
 
@@ -196,6 +232,21 @@ A documentação da API está disponível através do Swagger UI:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
+\
+&nbsp;
+\
+&nbsp;
+
+
+## 💾 Estrutura do Banco de dados
+Diagrama online: https://drive.google.com/file/d/1iMCBDlxrFJ6xLO_noW4Jh-e9NoUi7bhE/view?usp=sharing
+
+![Diagrama do banco de dados](./doc_resources/diagrama_db.png)
+
+\
+&nbsp;
+\
+&nbsp;
 
 ## 🔍 Estrutura do Projeto
 
@@ -213,6 +264,10 @@ gastrohub/
     │   └── 📂 test/
     └── 📄 pom.xml
 ```
+\
+&nbsp;
+\
+&nbsp;
 
 ## 🤝 Contribuição
 
