@@ -1,6 +1,8 @@
 package com.fiap.GastroHub.helper;
 
 import com.fiap.GastroHub.modules.users.dtos.CreateUpdateUserRequest;
+import com.fiap.GastroHub.modules.users.dtos.LoginUserRequest;
+import com.fiap.GastroHub.modules.users.dtos.LoginUserResponse;
 import com.fiap.GastroHub.modules.users.dtos.UserResponse;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 
@@ -50,5 +52,20 @@ public abstract class UserTestHelper {
         userResponse.setEmail(user.getEmail());
 
         return userResponse;
+    }
+
+    public static LoginUserRequest generateLoginUserRequest() {
+        LoginUserRequest loginUserRequest = new LoginUserRequest();
+        loginUserRequest.setEmail("johndoe@example.com");
+        loginUserRequest.setPassword("securepassword");
+
+        return loginUserRequest;
+    }
+
+    public static LoginUserResponse generateLoginUserResponse() {
+        LoginUserResponse loginUserResponse = new LoginUserResponse();
+        loginUserResponse.setToken("eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDI0MjA5OTMsImV4cCI6MTc0MjQ1Njk5M30.l43ATfcqSQMMSGIhyl3FbxyoTYeJ9dPlTOfbZBD0BYs");
+
+        return loginUserResponse;
     }
 }

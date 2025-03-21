@@ -9,18 +9,22 @@ import java.time.LocalDateTime;
 
 
 @Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateUpdateUserRequest {
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Name can not be empty")
     private String name;
 
-    @NotBlank(message = "Address is required")
+    @NotBlank(message = "Address can not be empty")
     private String address;
 
-    @NotBlank(message = "Email is required")
+    @NotBlank(message = "Email can not be empty")
     @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "Password can not be empty")
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
