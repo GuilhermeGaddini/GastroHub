@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("User Repository Test Class")
 public class UserRepositoryTest {
 
     @Mock
@@ -35,6 +36,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Create - Success")
     void createUser() {
         var role = new Role(1L, "Admin");
         var user = new User();
@@ -52,7 +54,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Get all users with success")
+    @DisplayName("Get all users - Success")
     void getAllUsers() {
         List<User> users = List.of();
         when(userRepository.findAll()).thenReturn(users);
@@ -63,6 +65,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Get By ID - Success")
     void getUserById() {
         var id = 1L;
         var role = new Role(1L, "Admin");
@@ -80,6 +83,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Get By Email - Success")
     void getUserByEmail() {
         var role = new Role(1L, "Admin");
         var user = new User();
@@ -95,11 +99,61 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Delete - Success")
     void deleteUser() {
         var id = 1L;
 
         doNothing().when(userRepository).deleteById(any(Long.class));
         userRepository.deleteById(id);
         verify(userRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Create - Failure: Saving null user")
+    void createUserFailure() {
+        when(userRepository.save(any(User.class))).thenThrow(new IllegalArgumentException("User cannot be null"));
+
+        try {
+            userRepository.save(null);
+        } catch (IllegalArgumentException e) {
+            verify(userRepository, times(1)).save(null);
+            assertThat(e.getMessage()).isEqualTo("User cannot be null");
+        }
+    }
+
+    @Test
+    @DisplayName("Get By ID - Error - Non-existent ID")
+    void getUserByIdFailure() {
+        var id = 99L;
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        var storedUser = userRepository.findById(id);
+        verify(userRepository, times(1)).findById(id);
+        assertThat(storedUser).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Get By Email - Error - Non-existent Email")
+    void getUserByEmailFailure() {
+        var email = "nonexistent@example.com";
+        when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+
+        var storedUser = userRepository.findByEmail(email);
+        verify(userRepository, times(1)).findByEmail(email);
+        assertThat(storedUser).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Delete - Error - Non-existent ID")
+    void deleteUserFailure() {
+        var id = 99L;
+        doThrow(new IllegalArgumentException("ID not found")).when(userRepository).deleteById(any(Long.class));
+
+        try {
+            userRepository.deleteById(id);
+        } catch (IllegalArgumentException e) {
+            verify(userRepository, times(1)).deleteById(id);
+            assertThat(e.getMessage()).isEqualTo("ID not found");
+        }
     }
 }

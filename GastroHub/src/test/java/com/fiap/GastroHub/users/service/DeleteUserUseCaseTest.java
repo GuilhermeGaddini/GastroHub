@@ -5,6 +5,7 @@ import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Delete User Use Case Test Class")
 class DeleteUserUseCaseTest {
 
     @Mock
@@ -30,13 +32,12 @@ class DeleteUserUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        // Configurando um usuário fictício para os testes
         mockUser = UserTestHelper.generateUser();
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidId_DeletesUser() {
-        // Mock do comportamento para quando o ID é válido
         when(userRepository.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
         doNothing().when(userRepository).delete(mockUser);
 
@@ -49,16 +50,13 @@ class DeleteUserUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Invalid ID")
     void execute_InvalidId_ThrowsUserException() {
         Long invalidId = 999L;
-
-        // Mock do comportamento para quando o ID não é encontrado
         when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> deleteUserUseCase.execute(invalidId));
 
-        // Asserções
         assertEquals("User with ID " + invalidId + " not found", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verify(userRepository, times(1)).findById(invalidId);

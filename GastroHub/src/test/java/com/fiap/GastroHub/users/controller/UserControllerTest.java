@@ -3,22 +3,14 @@ package com.fiap.GastroHub.users.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiap.GastroHub.helper.UserTestHelper;
-import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
-import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
-import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
-import com.fiap.GastroHub.modules.roles.usecases.GetAllRolesUseCase;
 import com.fiap.GastroHub.modules.users.dtos.*;
 import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.http.UserController;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.usecases.*;
 import com.fiap.GastroHub.shared.exception.GlobalExceptionHandler;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
+@DisplayName("User Controller test Class")
 public class UserControllerTest {
     private MockMvc mockMvc;
 
@@ -87,8 +80,10 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Create cases")
     class CreateUser{
         @Test
+        @DisplayName("Create user - Success")
         void createUser_success() throws Exception {
             CreateUpdateUserRequest userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             User user = UserTestHelper.generateUser();
@@ -104,6 +99,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Create user - Error - Blank email")
         void createUser_exception_blankEmail() throws Exception {
             var userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setEmail("");
@@ -120,6 +116,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Create user - Error - Null email")
         void createUser_exception_nullEmail() throws Exception{
             var userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setEmail(null);
@@ -134,6 +131,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Create user - Error - Invalid email")
         void createUser_exception_invalidEmail() throws Exception{
             var userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setEmail("invalidemail");
@@ -148,6 +146,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Create user - Error - Short Password")
         void createUser_exception_shortPssword() throws Exception{
             var userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setPassword("123");
@@ -162,6 +161,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Create user - Error - Null Password")
         void createUser_exception_nullPassword() throws Exception{
             var userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setPassword(null);
@@ -176,6 +176,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Create user - Error - xmlPayload")
         void createUser_exception_xmlPayload() throws Exception{
             String xmlPayload = "<user><id>2</id><name>Regular User</name></user>";
 
@@ -188,8 +189,10 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Update cases")
     class UpdateUser{
         @Test
+        @DisplayName("Update user - Success")
         void updateUser_success() throws Exception {
             CreateUpdateUserRequest updatedUser = UserTestHelper.generateCreateUpdateUserRequest();
             User user = UserTestHelper.generateUser();
@@ -209,6 +212,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Update user - Error - Blank Name")
         void updateUser_exception_blankName() throws Exception {
             CreateUpdateUserRequest userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setName("");
@@ -224,6 +228,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Update user - Error - Null Name")
         void updateUser_exception_nullName() throws Exception {
             CreateUpdateUserRequest userRequest = UserTestHelper.generateCreateUpdateUserRequest();
             userRequest.setName(null);
@@ -240,8 +245,10 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Delete cases")
     class DeleteUser{
         @Test
+        @DisplayName("Delete user - Success")
         void deleteUser_success() throws Exception {
             doNothing().when(deleteUserUseCase).execute(1L);
 
@@ -254,6 +261,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Delete user - Error - ID don't Exist")
         void deleteUser_exception_idDontExist() throws Exception {
             doThrow(new UserException("User not found", HttpStatus.NOT_FOUND))
                     .when(deleteUserUseCase).execute(999L);
@@ -269,8 +277,10 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Get all Cases")
     class GetAllUser{
         @Test
+        @DisplayName("Get all Users - Success")
         void getAllUsers_success() throws Exception {
             User user = UserTestHelper.generateUser();
             when(getAllUsersUseCase.execute()).thenReturn(List.of(UserTestHelper.generateUserResponse(user)));
@@ -288,6 +298,7 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Get User By ID - Success")
     class GetUserById{
         @Test
         void getUserById_success() throws Exception {
@@ -308,6 +319,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Get User By ID - Error-  ID don't exist")
         void getUserById_exception_idDontExist() throws Exception {
             when(getUserByIdUseCase.execute(999L)).thenThrow(new UserException("User not found", HttpStatus.NOT_FOUND));
 
@@ -323,8 +335,10 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Login Cases")
     class LoginUser{
         @Test
+        @DisplayName("Login - Success")
         void login_success() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
 
@@ -340,6 +354,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Login - Error - Blank Email")
         void login_exception_blankEmail() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setEmail("");
@@ -356,6 +371,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Login - Error - Null Email")
         void login_exception_nullEmail() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setEmail(null);
@@ -371,6 +387,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Login - Error - Blank Password")
         void login_exception_blankPassword() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setPassword("");
@@ -387,6 +404,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Login - Error - Null Password")
         void login_exception_nullPassword() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setPassword(null);
@@ -402,6 +420,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Login - Error - Wrong Password")
         void login_exception_wrongPassword() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setPassword("bla");
@@ -418,6 +437,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Login - Error - User not found")
         void login_exception_userNotFound() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setEmail("notfound@notfound.org");
@@ -435,8 +455,10 @@ public class UserControllerTest {
     }
 
     @Nested
+    @DisplayName("Change Password Cases")
     class ChangeUserPassword {
         @Test
+        @DisplayName("Change Password - Success")
         void changePassword_success() throws Exception {
             Long userId = 1L;
             ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
@@ -453,6 +475,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Change Password - error - Wrong Current Password")
         void changePassword_failure_wrongCurrentPassword() throws Exception {
             Long userId = 1L;
             ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
@@ -472,6 +495,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Change Password - error - User not found")
         void changePassword_failure_userNotFound() throws Exception {
             Long userId = 1L;
             ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
@@ -490,6 +514,7 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("Change Password - error - Internal Server Error")
         void changePassword_failure_internalServerError() throws Exception {
             Long userId = 1L;
             ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
