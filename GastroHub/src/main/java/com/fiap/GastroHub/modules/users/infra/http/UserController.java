@@ -5,6 +5,7 @@ import com.fiap.GastroHub.modules.users.usecases.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,7 @@ public class UserController {
     })
     @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(
-            @RequestBody CreateUpdateUserRequest request
+            @Valid @RequestBody CreateUpdateUserRequest request
     ) {
         UserResponse createdUser = createUserUseCase.execute(request);
         return ResponseEntity.ok(createdUser);
@@ -98,8 +99,8 @@ public class UserController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(
-            @PathVariable("id") Long id,
-            @RequestBody CreateUpdateUserRequest request
+            @Valid @PathVariable("id") Long id,
+            @Valid @RequestBody CreateUpdateUserRequest request
     ) {
         logger.info("PUT -> /users/{}", id);
         UserResponse updatedUser = updateUserUseCase.execute(id, request);
@@ -115,8 +116,8 @@ public class UserController {
     })
     @PutMapping("/{id}/password")
     public ResponseEntity<Void> changeUserPassword(
-            @PathVariable("id") Long id,
-            @RequestBody ChangeUserPasswordRequest changeUserPasswordRequest
+            @Valid @PathVariable("id") Long id,
+            @Valid @RequestBody ChangeUserPasswordRequest changeUserPasswordRequest
     ) {
         logger.info("PUT -> password/users/{}", id);
         this.changeUserPasswordUseCase.execute(id, changeUserPasswordRequest);
@@ -132,7 +133,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro Interno")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteUser(@Valid @PathVariable("id") Long id) {
         logger.info("DELETE -> /users/{}", id);
         deleteUserUseCase.execute(id);
         return ResponseEntity.noContent().build();
@@ -146,7 +147,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro Interno")
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginUserResponse> loginUser(@RequestBody LoginUserRequest loginUserRequest) {
+    public ResponseEntity<LoginUserResponse> loginUser(@Valid @RequestBody LoginUserRequest loginUserRequest) {
         String token = loginUserUseCase.execute(loginUserRequest);
         LoginUserResponse response = new LoginUserResponse(token);
         return new ResponseEntity<>(response, HttpStatus.OK);

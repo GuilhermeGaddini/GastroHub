@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, Object> response = new HashMap<>();
@@ -28,8 +27,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(RoleException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomException(RoleException ex) {
+    @ExceptionHandler(GastroHubException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomException(GastroHubException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", ex.getMessage());
         response.put("status", ex.getStatusCode().value());
