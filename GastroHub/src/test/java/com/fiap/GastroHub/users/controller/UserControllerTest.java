@@ -7,10 +7,7 @@ import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.usecases.GetAllRolesUseCase;
-import com.fiap.GastroHub.modules.users.dtos.CreateUpdateUserRequest;
-import com.fiap.GastroHub.modules.users.dtos.LoginUserRequest;
-import com.fiap.GastroHub.modules.users.dtos.LoginUserResponse;
-import com.fiap.GastroHub.modules.users.dtos.UserResponse;
+import com.fiap.GastroHub.modules.users.dtos.*;
 import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.http.UserController;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
@@ -408,24 +405,107 @@ public class UserControllerTest {
         void login_exception_wrongPassword() throws Exception {
             LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
             loginUserRequest.setPassword("bla");
-            var mySpy = Mockito.spy(loginUserUseCase);
 
-            when(loginUserUseCase.execute(loginUserRequest)).thenThrow(new UserException("Usuário ou senha inválidos", HttpStatus.UNAUTHORIZED));
+            when(loginUserUseCase.execute(any(LoginUserRequest.class))).thenThrow(new UserException("Usuário ou senha inválidos", HttpStatus.UNAUTHORIZED));
 
             mockMvc.perform(post("/users/login").contentType(MediaType.APPLICATION_JSON)
                             .content(asJsonString(loginUserRequest)))
                     .andDo(print())
-                    .andExpect(status().isUnauthorized());
-//                    .andExpect(jsonPath("$.message").value("Validation error"))
-//                    .andExpect(jsonPath("$.errors[0]").value("Password can not be empty"));
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.message").value("Usuário ou senha inválidos"));
 
-            verify(loginUserUseCase, never()).execute(any(LoginUserRequest.class));
+            verify(loginUserUseCase, times(1)).execute(any(LoginUserRequest.class));
+        }
+
+        @Test
+        void login_exception_userNotFound() throws Exception {
+            LoginUserRequest loginUserRequest = UserTestHelper.generateLoginUserRequest();
+            loginUserRequest.setEmail("notfound@notfound.org");
+
+            when(loginUserUseCase.execute(any(LoginUserRequest.class))).thenThrow(new UserException("Usuário não encontrado", HttpStatus.NOT_FOUND));
+
+            mockMvc.perform(post("/users/login").contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(loginUserRequest)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Usuário não encontrado"));
+
+            verify(loginUserUseCase, times(1)).execute(any(LoginUserRequest.class));
         }
     }
 
     @Nested
-    class ChangeUserPassword{
+    class ChangeUserPassword {
+        @Test
+        void changePassword_success() throws Exception {
+            Long userId = 1L;
+            ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
 
+            doNothing().when(changeUserPasswordUseCase).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+
+            mockMvc.perform(put("/users/{id}/password", userId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(passwordRequest)))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+
+            verify(changeUserPasswordUseCase, times(1)).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+        }
+
+        @Test
+        void changePassword_failure_wrongCurrentPassword() throws Exception {
+            Long userId = 1L;
+            ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
+            passwordRequest.setCurrentPassword("wrongPassword");
+
+            doThrow(new UserException("Password does not match", HttpStatus.UNAUTHORIZED))
+                    .when(changeUserPasswordUseCase).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+
+            mockMvc.perform(put("/users/{id}/password", userId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(passwordRequest)))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.message").value("Password does not match"));
+
+            verify(changeUserPasswordUseCase, times(1)).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+        }
+
+        @Test
+        void changePassword_failure_userNotFound() throws Exception {
+            Long userId = 1L;
+            ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
+
+            doThrow(new UserException("User not found", HttpStatus.NOT_FOUND))
+                    .when(changeUserPasswordUseCase).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+
+            mockMvc.perform(put("/users/{id}/password", userId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(passwordRequest)))
+                    .andDo(print())
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("User not found"));
+
+            verify(changeUserPasswordUseCase, times(1)).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+        }
+
+        @Test
+        void changePassword_failure_internalServerError() throws Exception {
+            Long userId = 1L;
+            ChangeUserPasswordRequest passwordRequest = UserTestHelper.generateChangeUserPasswordRequest();
+
+            doThrow(new UserException(String.format("Failed to update user with id %d", userId), HttpStatus.INTERNAL_SERVER_ERROR))
+                    .when(changeUserPasswordUseCase).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+
+            mockMvc.perform(put("/users/{id}/password", userId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(passwordRequest)))
+                    .andDo(print())
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.message").value(String.format("Failed to update user with id %d", userId)));
+
+            verify(changeUserPasswordUseCase, times(1)).execute(eq(userId), any(ChangeUserPasswordRequest.class));
+        }
     }
 
     // Helper method

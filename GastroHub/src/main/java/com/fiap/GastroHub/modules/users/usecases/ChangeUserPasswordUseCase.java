@@ -51,7 +51,7 @@ public class ChangeUserPasswordUseCase {
                }
 
            } else {
-               throw new RuntimeException("User not found");
+               throw new UserException("User not found", HttpStatus.NOT_FOUND);
            }
 
            logger.info("Password updated successfully");

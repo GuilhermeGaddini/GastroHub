@@ -1,9 +1,6 @@
 package com.fiap.GastroHub.helper;
 
-import com.fiap.GastroHub.modules.users.dtos.CreateUpdateUserRequest;
-import com.fiap.GastroHub.modules.users.dtos.LoginUserRequest;
-import com.fiap.GastroHub.modules.users.dtos.LoginUserResponse;
-import com.fiap.GastroHub.modules.users.dtos.UserResponse;
+import com.fiap.GastroHub.modules.users.dtos.*;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 
 import java.util.Date;
@@ -67,5 +64,13 @@ public abstract class UserTestHelper {
         loginUserResponse.setToken("eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDI0MjA5OTMsImV4cCI6MTc0MjQ1Njk5M30.l43ATfcqSQMMSGIhyl3FbxyoTYeJ9dPlTOfbZBD0BYs");
 
         return loginUserResponse;
+    }
+
+    public static ChangeUserPasswordRequest generateChangeUserPasswordRequest() {
+        ChangeUserPasswordRequest changeUserPasswordRequest = new ChangeUserPasswordRequest();
+        changeUserPasswordRequest.setCurrentPassword("securepassword");
+        changeUserPasswordRequest.setNewPassword("newsecurepassword");
+
+        return changeUserPasswordRequest;
     }
 }
