@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductResponse {
     private String name;
     private BigDecimal price;

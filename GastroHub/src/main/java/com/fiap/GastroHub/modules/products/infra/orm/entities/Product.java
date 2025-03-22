@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "products")
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

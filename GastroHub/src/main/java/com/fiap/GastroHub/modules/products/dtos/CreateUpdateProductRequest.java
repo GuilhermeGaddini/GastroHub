@@ -1,13 +1,17 @@
 package com.fiap.GastroHub.modules.products.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
 
 
 @Data
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreateUpdateProductRequest {
     @NotBlank(message = "Name is required")
     private String name;
@@ -15,7 +19,7 @@ public class CreateUpdateProductRequest {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Price type is required")
+    @NotNull(message = "Price is required")
     private BigDecimal price;
 
     @NotBlank(message = "Availability is required")
@@ -23,7 +27,7 @@ public class CreateUpdateProductRequest {
 
     private String picPath;
 
-    @NotBlank(message = "Restaurant ID is required")
+    @NotNull(message = "Restaurant ID is required")
     private Long restaurant;
 
 }
