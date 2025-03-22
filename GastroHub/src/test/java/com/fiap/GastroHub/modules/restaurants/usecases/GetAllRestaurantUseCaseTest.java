@@ -132,7 +132,7 @@ public class GetAllRestaurantUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should not get all restaurants successfully")
+    @DisplayName("Should not get all restaurants with exception")
     void execute_ThrowsRestaurantExceptionOnError() {
         when(restaurantRepository.findAll()).thenThrow(new ProductException("Error fetching restaurants", HttpStatus.BAD_REQUEST));
 

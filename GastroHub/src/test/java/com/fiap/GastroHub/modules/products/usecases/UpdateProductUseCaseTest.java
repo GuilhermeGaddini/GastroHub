@@ -125,7 +125,7 @@ public class UpdateProductUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should not update a product successfully")
+    @DisplayName("Should not update a product with exception")
     void execute_InvalidId_ThrowsProductException() {
         CreateUpdateProductRequest updateProductRequest = new CreateUpdateProductRequest(
                 "Produto 2",
