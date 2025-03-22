@@ -10,6 +10,9 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "users")
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

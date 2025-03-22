@@ -5,6 +5,7 @@ import com.fiap.GastroHub.modules.products.usecases.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ProductController {
     }
 
 
-    @Operation(summary = "Crier um produce")
+    @Operation(summary = "Criar um produto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sucesso"),
             @ApiResponse(responseCode = "400", description = "Requisição inválida"),
@@ -46,7 +47,7 @@ public class ProductController {
     })
     @PostMapping("/create")
     public ResponseEntity<ProductResponse> createProduct(
-            @RequestBody CreateUpdateProductRequest request
+            @Valid @RequestBody CreateUpdateProductRequest request
     ) {
         ProductResponse createdProduct = createProductUseCase.execute(request);
         return ResponseEntity.ok(createdProduct);
@@ -96,7 +97,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable("id") Long id,
-            @RequestBody CreateUpdateProductRequest request
+            @Valid @RequestBody CreateUpdateProductRequest request
     ) {
         logger.info("PUT -> /products/{}", id);
         ProductResponse updatedProduct = updateProductUseCase.execute(id, request);

@@ -6,6 +6,7 @@ import com.fiap.GastroHub.modules.restaurants.usecases.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class RestaurantController {
     })
     @PostMapping("/create")
     public ResponseEntity<RestaurantResponse> createRestaurant(
-            @RequestBody CreateUpdateRestaurantRequest request
+            @Valid @RequestBody CreateUpdateRestaurantRequest request
     ) {
         RestaurantResponse createdRestaurant = createRestaurantUseCase.execute(request);
         return ResponseEntity.ok(createdRestaurant);
@@ -110,7 +111,7 @@ public class RestaurantController {
     @PutMapping("/{id}")
     public ResponseEntity<RestaurantResponse> updateRestaurant(
             @PathVariable("id") Long id,
-            @RequestBody CreateUpdateRestaurantRequest request
+            @Valid @RequestBody CreateUpdateRestaurantRequest request
     ) {
         logger.info("PUT -> /restaurants/{}", id);
         RestaurantResponse updatedRestaurant = updateRestaurantUseCase.execute(id, request);

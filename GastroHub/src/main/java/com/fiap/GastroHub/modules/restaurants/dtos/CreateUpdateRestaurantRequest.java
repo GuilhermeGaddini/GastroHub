@@ -1,10 +1,12 @@
 package com.fiap.GastroHub.modules.restaurants.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
 @Data
+@AllArgsConstructor
 public class CreateUpdateRestaurantRequest {
     @NotBlank(message = "Name is required")
     private String name;
@@ -18,7 +20,7 @@ public class CreateUpdateRestaurantRequest {
     @NotBlank(message = "Opening hours is required")
     private String openingHours;
 
-    @NotBlank(message = "Owner ID is required")
+    @NotNull(message = "Owner ID is required")
     private Long owner;
 
 }

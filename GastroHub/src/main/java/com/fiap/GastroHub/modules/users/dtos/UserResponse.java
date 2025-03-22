@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
     private long id;
     private String name;
