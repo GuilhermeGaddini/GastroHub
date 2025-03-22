@@ -4,6 +4,7 @@ import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import com.fiap.GastroHub.modules.roles.usecases.GetRoleByIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Get Role By ID Use Case Test Class")
 class GetRoleByIdUseCaseTest {
 
     @Mock
@@ -33,14 +35,12 @@ class GetRoleByIdUseCaseTest {
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidId_ReturnsRole() {
-        // Configuração do mock
         when(roleRepository.findById(mockRole.getId())).thenReturn(Optional.of(mockRole));
 
-        // Execução do método
         Role result = getRoleByIdUseCase.execute(mockRole.getId());
 
-        // Verificações
         assertNotNull(result);
         assertEquals(mockRole.getId(), result.getId());
         assertEquals(mockRole.getName(), result.getName());
@@ -48,13 +48,13 @@ class GetRoleByIdUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Invalid ID")
     void execute_InvalidId_ThrowsRoleException() {
         Long invalidId = 999L;
 
         // Configuração do mock para retornar vazio
         when(roleRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        // Execução do método e verificação da exceção
         RoleException exception = assertThrows(RoleException.class, () -> getRoleByIdUseCase.execute(invalidId));
 
         assertEquals("Role not found", exception.getMessage());

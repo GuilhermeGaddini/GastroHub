@@ -34,9 +34,8 @@ public class CreateUserUseCase {
     @LogBean
     @Transactional
     public UserResponse execute(CreateUpdateUserRequest request) {
-        logger.info("Trying to create a new user with the following info: {}", request.getName());
-
         try {
+            logger.info("Trying to create a new user with the following info: {}", request.getName());
             User user = modelMapper.map(request, User.class);
             user.setCreatedAt(new Date());
             user.setLastUpdatedAt(user.getCreatedAt());

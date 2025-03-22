@@ -5,6 +5,7 @@ import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import com.fiap.GastroHub.modules.roles.usecases.UpdateRoleUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Update Role Use Case Test Class")
 class UpdateRoleUseCaseTest {
 
     @Mock
@@ -31,23 +33,19 @@ class UpdateRoleUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        // Mock da Role existente no banco
         existingRole = new Role(1L, "Admin");
 
-        // Mock da Role com as novas informações para atualização
         updateRequest = new CreateUpdateRoleRequest("Super Admin");
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidIdAndRequest_UpdatesRole() {
-        // Configuração do mock para retornar a Role existente
         when(roleRepository.findById(existingRole.getId())).thenReturn(Optional.of(existingRole));
         when(roleRepository.save(existingRole)).thenReturn(existingRole);
 
-        // Execução do método
         Role result = updateRoleUseCase.execute(existingRole.getId(), updateRequest);
 
-        // Verificações
         assertNotNull(result);
         assertEquals(existingRole.getId(), result.getId());
         assertEquals(updateRequest.getName(), result.getName());
@@ -56,13 +54,30 @@ class UpdateRoleUseCaseTest {
     }
 
     @Test
+    @DisplayName("Success - No Changes")
+    void execute_ValidIdNoChanges_ReturnsExistingRole() {
+        when(roleRepository.findById(existingRole.getId())).thenReturn(Optional.of(existingRole));
+        when(roleRepository.save(existingRole)).thenReturn(existingRole);
+
+        updateRequest.setName("Admin");
+
+        Role result = updateRoleUseCase.execute(existingRole.getId(), updateRequest);
+
+        // Verificações
+        assertNotNull(result);
+        assertEquals(existingRole.getId(), result.getId());
+        assertEquals(existingRole.getName(), result.getName());
+        verify(roleRepository, times(1)).findById(existingRole.getId());
+        verify(roleRepository, times(1)).save(existingRole);
+    }
+
+    @Test
+    @DisplayName("Error - Invalid ID")
     void execute_InvalidId_ThrowsRoleException() {
         Long invalidId = 999L;
 
-        // Configuração do mock para retornar vazio (Role não encontrada)
         when(roleRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        // Execução do método e verificação da exceção
         RoleException exception = assertThrows(RoleException.class, () -> updateRoleUseCase.execute(invalidId, updateRequest));
 
         assertEquals("Role not found", exception.getMessage());
@@ -70,4 +85,38 @@ class UpdateRoleUseCaseTest {
         verify(roleRepository, times(1)).findById(invalidId);
         verify(roleRepository, never()).save(any());
     }
+
+    @Test
+    @DisplayName("Error - Null ID")
+    void execute_NullId_ThrowsRoleException() {
+        RoleException exception = assertThrows(RoleException.class, () -> updateRoleUseCase.execute(null, updateRequest));
+
+        assertEquals("Role not found", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        verify(roleRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Error - Null Update Request")
+    void execute_NullRequest_ThrowsRoleException() {
+        RoleException exception = assertThrows(RoleException.class, () -> updateRoleUseCase.execute(existingRole.getId(), null));
+
+        assertEquals("Role not found", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        verify(roleRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Error - Role Repository Throws Exception")
+    void execute_SaveThrowsException_ThrowsRoleException() {
+        when(roleRepository.findById(existingRole.getId())).thenReturn(Optional.of(existingRole));
+        when(roleRepository.save(existingRole)).thenThrow(new RuntimeException("Database error"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> updateRoleUseCase.execute(existingRole.getId(), updateRequest));
+
+        assertEquals("Database error", exception.getMessage());
+        verify(roleRepository, times(1)).findById(existingRole.getId());
+        verify(roleRepository, times(1)).save(existingRole);
+    }
+
 }

@@ -7,6 +7,7 @@ import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.usecases.LoginUserUseCase;
 import com.fiap.GastroHub.modules.users.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Login Use Case Test Class")
 class LoginUserUseCaseTest {
 
     @Mock
@@ -36,29 +38,25 @@ class LoginUserUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        // Configuração do usuário fictício
         mockUser = new User();
         mockUser.setId(1L);
         mockUser.setName("John Doe");
         mockUser.setEmail("johndoe@example.com");
         mockUser.setPassword("encryptedPassword");
 
-        // Configuração do request de login
         loginRequest = new LoginUserRequest();
         loginRequest.setEmail("johndoe@example.com");
         loginRequest.setPassword("encryptedPassword");
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidCredentials_ReturnsJwtToken() {
-        // Configuração dos mocks para credenciais válidas
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(mockUser));
         when(jwtUtil.generateToken(mockUser.getId(), mockUser.getName(), mockUser.getEmail())).thenReturn("mockJwtToken");
 
-        // Execução do método
         String result = loginUserUseCase.execute(loginRequest);
 
-        // Verificações
         assertNotNull(result);
         assertEquals("mockJwtToken", result);
         verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
@@ -66,14 +64,12 @@ class LoginUserUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - User not found")
     void execute_UserNotFound_ThrowsUserException() {
-        // Configuração do mock para usuário não encontrado
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.empty());
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> loginUserUseCase.execute(loginRequest));
 
-        // Verificações
         assertEquals("Usuário não encontrado", exception.getMessage());
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
@@ -81,15 +77,13 @@ class LoginUserUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Invalid password")
     void execute_InvalidPassword_ThrowsUserException() {
-        // Configuração do mock para senha inválida
         loginRequest.setPassword("wrongPassword");
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(mockUser));
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> loginUserUseCase.execute(loginRequest));
 
-        // Verificações
         assertEquals("Usuário ou senha inválidos", exception.getMessage());
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());

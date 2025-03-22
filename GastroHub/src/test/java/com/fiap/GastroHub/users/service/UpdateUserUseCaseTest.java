@@ -8,6 +8,7 @@ import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.usecases.UpdateUserUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Update User Use Case Test Class")
 class UpdateUserUseCaseTest {
 
     @Mock
@@ -39,19 +41,16 @@ class UpdateUserUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        // Configuração do usuário fictício
         mockUser = UserTestHelper.generateUser();
 
-        // Configuração do DTO de atualização
         updateRequest = UserTestHelper.generateCreateUpdateUserRequest();
 
-        // Configuração do DTO de resposta
         userResponse = UserTestHelper.generateUserResponse(mockUser);
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidIdAndRequest_UpdatesAndReturnsUserResponse() {
-        // Configuração dos mocks para ID válido e mapeamento
         when(userRepository.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
         doAnswer(invocation -> {
             User user = invocation.getArgument(1); // Mapeia updateRequest para mockUser
@@ -62,10 +61,8 @@ class UpdateUserUseCaseTest {
         when(userRepository.save(mockUser)).thenReturn(mockUser);
         when(modelMapper.map(mockUser, UserResponse.class)).thenReturn(userResponse);
 
-        // Execução do método
         UserResponse result = updateUserUseCase.execute(mockUser.getId(), updateRequest);
 
-        // Verificações
         assertNotNull(result);
         assertEquals(updateRequest.getName(), result.getName());
         assertEquals(updateRequest.getEmail(), result.getEmail());
@@ -76,16 +73,14 @@ class UpdateUserUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Invalid ID")
     void execute_InvalidId_ThrowsUserException() {
         Long invalidId = 999L;
 
-        // Configuração do mock para ID inválido
         when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> updateUserUseCase.execute(invalidId, updateRequest));
 
-        // Verificações
         assertEquals("User not found", exception.getMessage());
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         verify(userRepository, times(1)).findById(invalidId);
