@@ -1,9 +1,12 @@
 # 🍽️ GastroHub
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F.svg?style=for-the-badge&logo=Spring-Boot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
-[![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=Docker&logoColor=white)](https://www.docker.com/)
+
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F.svg?style=for-the-badge&logo=Spring-Boot&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 
 > 🎓 Projeto desenvolvido como parte do curso de Pós-Graduação em Arquitetura e Desenvolvimento Java da FIAP.
 
@@ -19,10 +22,20 @@ Sistema de gestão de operações para restaurantes com funcionalidades para cli
 - [Contribuição](#-contribuição)
 - [Licença](#-licença)
 - [Contato](#-contato)
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 🚀 Sobre o Projeto
 
 GastroHub é uma solução completa desenvolvida durante o curso de Pós-Graduação em Arquitetura e Desenvolvimento Java da FIAP. O projeto demonstra a aplicação prática de padrões de arquitetura, boas práticas de desenvolvimento e tecnologias modernas do ecossistema Java.
+\
+&nbsp;
+\
+&nbsp;
+
 
 ### 🎯 Objetivo Acadêmico
 
@@ -32,6 +45,11 @@ Este projeto serve como aplicação prática dos conceitos aprendidos durante o 
 - Clean Code
 - DevOps e Containerização
 - APIs RESTful
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 🛠️ Tecnologias
 
@@ -40,6 +58,11 @@ Este projeto serve como aplicação prática dos conceitos aprendidos durante o 
 - ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
 - ![Docker](https://img.shields.io/badge/Docker-latest-blue)
 - ![Maven](https://img.shields.io/badge/Maven-3.8.4-red)
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## ✨ Funcionalidades
 
@@ -54,6 +77,11 @@ Este projeto serve como aplicação prática dos conceitos aprendidos durante o 
 - Realização de pedidos online
 - Sistema de avaliações
 - Reserva de mesas
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 🏃‍♂️ Começando
 
@@ -71,7 +99,72 @@ git clone https://github.com/seu-usuario/gastrohub.git
 cd gastrohub
 ```
 
-### 2️⃣ Configuração do Docker
+### 2️⃣ Compilando a aplicação
+Neste momento, a aplicação precisa ser compilada antes de poder ser executada em seus containers Docker.
+
+Para isso, abra o projeto da pasta `sgr` em uma IDE Java e rode a rotina de `install` do maven. No Intellij:
+![intellij](./doc_resources/maven_install.png)
+
+Pelo console execute o comando `mvn clean install`.
+
+Isso irá compilar a aplicação e criar o arquivo `sgr/target/sgr-0.0.1.jar` necessario para build do container da aplicação.
+\
+&nbsp;
+
+#### Comandos para rodar a aplicação
+Para iniciar todos os containers e acessar a aplicação: `docker-compose up`.
+Por default o arquivo docker-compose.yaml será utilizado. Que faz:
+
+1. Baixa o container padrão do MySQL.
+    1. Configura o DB MySQL (usuarios, senhas, etc.).
+    1. Cria o banco de dados 'sgr' (tabelas, etc.).
+    1. Cria dados de teste na tabela 'usuarios'.
+1. Constroi o container da aplicação.
+    1. Baixa o container padrao openjdk.
+    1. Copia o arquivo da aplicação para dentro do container.
+    1. Cria um entrypoint com o comando de execução da aplicação.
+\
+&nbsp;
+
+
+#### Exemplos:
+Execução do comando de inicialização:
+![docker_compose_up1](./doc_resources/docker_compose_up1.png)
+
+Criação e configuração do DB:
+![docker_compose_up2](./doc_resources/docker_compose_up2.png)
+
+Teste da aplicação:
+![teste1](./doc_resources/teste1.png)
+![teste2](./doc_resources/teste2.png)
+\
+&nbsp;
+
+
+#### Comandos para parar a aplicação
+Normalmente todos os containers provisionados são encerrados sem problemas com execução do comando `docker-compose down` no diretório em que o arquivo `docker-compose.yaml` está. 
+
+Existem situações em que os containers podem ficar rodando devido a problemas de execução ou falhas de inicialização.
+
+###### Comandos de cleanup
+Em caso de problemas para provisionar os containers, execute os comandos abaixo:
+
+- `docker-compose down -v`: Remove os serviços do Docker Compose junto com seus volumes.
+    - `down`: Parar e remover contêineres, redes e imagens criados pelo arquivo docker-compose.yml.
+    - `-v`: Remove também os volumes associados aos serviços.
+- `docker system prune -af`: Remove todos os recursos não utilizados (contêineres, imagens, redes e volumes).
+    - `system prune`: Limpa todos os recursos não utilizados (contêineres, redes, imagens, e volumes).
+    - `-a`: Remove todas as imagens não utilizadas, não apenas as "dangling" (aquelas sem tags ou sem contêineres associados).
+    - `-f`: Força a execução do comando sem solicitar confirmação.
+- `docker volume prune -f`: Remove somente volumes órfãos (não utilizados por nenhum contêiner).
+    - `volume prune`: Exclui volumes que não estão atualmente em uso.
+    - `-f`: Força a execução do comando sem pedir confirmação.
+\
+&nbsp;
+\
+&nbsp;
+
+### 3️⃣ Configuração do Docker
 
 Para iniciar o ambiente de desenvolvimento:
 
@@ -91,8 +184,13 @@ docker-compose logs -f
 # Verificar status dos containers
 docker ps
 ```
+\
+&nbsp;
+\
+&nbsp;
 
-### 3️⃣ Configuração do Banco de Dados
+
+### 4️⃣ Configuração do Banco de Dados
 
 O Docker Compose irá:
 - Inicializar o MySQL na porta 3306
@@ -103,6 +201,11 @@ Para acessar o MySQL via terminal:
 ```bash
 docker exec -it gastrohub-mysql mysql -uroot -proot
 ```
+\
+&nbsp;
+\
+&nbsp;
+
 
 ### 4️⃣ Executando o Projeto
 
@@ -117,6 +220,11 @@ cd gastrohub
 ```
 
 O aplicativo estará disponível em `http://localhost:8080`
+\
+&nbsp;
+\
+&nbsp;
+
 
 ## 📚 Documentação da API
 
@@ -124,6 +232,21 @@ A documentação da API está disponível através do Swagger UI:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
+\
+&nbsp;
+\
+&nbsp;
+
+
+## 💾 Estrutura do Banco de dados
+Diagrama online: https://drive.google.com/file/d/1iMCBDlxrFJ6xLO_noW4Jh-e9NoUi7bhE/view?usp=sharing
+
+![Diagrama do banco de dados](./doc_resources/diagrama_db.png)
+
+\
+&nbsp;
+\
+&nbsp;
 
 ## 🔍 Estrutura do Projeto
 
@@ -141,6 +264,10 @@ gastrohub/
     │   └── 📂 test/
     └── 📄 pom.xml
 ```
+\
+&nbsp;
+\
+&nbsp;
 
 ## 🤝 Contribuição
 
