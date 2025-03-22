@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("Role Repository Test Class")
 public class RoleRepositoryTest {
 
     @Mock
@@ -35,6 +36,7 @@ public class RoleRepositoryTest {
     }
 
     @Test
+    @DisplayName("Create - Success")
     void createRole() {
         var role = RoleTestHelper.generateRole();
         when(roleRepository.save(any(Role.class))).thenReturn(role);
@@ -45,7 +47,7 @@ public class RoleRepositoryTest {
     }
 
     @Test
-    @DisplayName("Get all roles with success")
+    @DisplayName("Get all - success")
     void getAllRoles() {
         List<Role> roles = List.of();
         when(roleRepository.findAll()).thenReturn(roles);
@@ -56,6 +58,7 @@ public class RoleRepositoryTest {
     }
 
     @Test
+    @DisplayName("Get By ID - Success")
     void getRoleById() {
         var id = Long.valueOf(1);
         var role = RoleTestHelper.generateRole();
@@ -69,6 +72,7 @@ public class RoleRepositoryTest {
     }
 
     @Test
+    @DisplayName("Get By Name - Success")
     void getRoleByName() {
         var role = RoleTestHelper.generateRole();
 
@@ -80,6 +84,7 @@ public class RoleRepositoryTest {
     }
 
     @Test
+    @DisplayName("Delete - Success")
     void deleteRole() {
         var id = Long.valueOf(1);
 
@@ -87,4 +92,54 @@ public class RoleRepositoryTest {
         roleRepository.deleteById(id);
         verify(roleRepository, times(1)).deleteById(id);
     }
+
+    @Test
+    @DisplayName("Get By ID - Error - Non-existent ID")
+    void getRoleByIdFailure() {
+        var id = 99L;
+        when(roleRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        var storedRole = roleRepository.findById(id);
+        verify(roleRepository, times(1)).findById(id);
+        assertThat(storedRole).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Get By Name - Error - Non-existent Name")
+    void getRoleByNameFailure() {
+        var name = "Non-existent Role"; // Nome inexistente
+        when(roleRepository.findByName(any(String.class))).thenReturn(Optional.empty());
+
+        var storedRole = roleRepository.findByName(name);
+        verify(roleRepository, times(1)).findByName(name);
+        assertThat(storedRole).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Create - Error - Null Role")
+    void createRoleFailure() {
+        when(roleRepository.save(any(Role.class))).thenThrow(new IllegalArgumentException("Role cannot be null"));
+
+        try {
+            roleRepository.save(null);
+        } catch (IllegalArgumentException e) {
+            verify(roleRepository, times(1)).save(null);
+            assertThat(e.getMessage()).isEqualTo("Role cannot be null");
+        }
+    }
+
+    @Test
+    @DisplayName("Delete - Error - Non-existent ID")
+    void deleteRoleFailure() {
+        var id = 99L;
+        doThrow(new IllegalArgumentException("Role not found")).when(roleRepository).deleteById(any(Long.class));
+
+        try {
+            roleRepository.deleteById(id);
+        } catch (IllegalArgumentException e) {
+            verify(roleRepository, times(1)).deleteById(id);
+            assertThat(e.getMessage()).isEqualTo("Role not found");
+        }
+    }
+
 }

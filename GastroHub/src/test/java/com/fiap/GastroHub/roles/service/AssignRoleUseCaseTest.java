@@ -7,6 +7,7 @@ import com.fiap.GastroHub.modules.roles.usecases.AssignRoleUseCase;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Assign Role to User Use Case Test Class")
 class AssignRoleUseCaseTest {
 
     @Mock
@@ -41,6 +43,7 @@ class AssignRoleUseCaseTest {
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidRequest_AssignsRoleToUser() {
         Role role = new Role();
         role.setId(1L);
@@ -65,8 +68,8 @@ class AssignRoleUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Role not found")
     void execute_RoleNotFound_ThrowsRoleException() {
-        // Configuração do mock para RoleRepository retornar vazio
         when(roleRepository.findById(request.getRoleId())).thenReturn(Optional.empty());
 
         RoleException exception = assertThrows(RoleException.class, () -> assignRoleUseCase.execute(request));
@@ -79,13 +82,12 @@ class AssignRoleUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - User not found")
     void execute_UserNotFound_ThrowsRoleException() {
-        // Mock para RoleRepository encontrar o Role
         Role role = new Role();
         role.setId(1L);
         when(roleRepository.findById(request.getRoleId())).thenReturn(Optional.of(role));
 
-        // Mock para UserRepository não encontrar o User
         when(userRepository.findById(request.getUserId())).thenReturn(Optional.empty());
 
         RoleException exception = assertThrows(RoleException.class, () -> assignRoleUseCase.execute(request));

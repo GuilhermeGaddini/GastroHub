@@ -7,6 +7,7 @@ import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.usecases.GetUserByIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Get User By ID Use Case Test Class")
 class GetUserByIdUseCaseTest {
 
     @Mock
@@ -42,15 +44,13 @@ class GetUserByIdUseCaseTest {
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidId_ReturnsUserResponse() {
-        // Configuração dos mocks para ID válido
         when(userRepository.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
         when(modelMapper.map(mockUser, UserResponse.class)).thenReturn(userResponse);
 
-        // Execução do método
         UserResponse result = getUserByIdUseCase.execute(mockUser.getId());
 
-        // Verificações
         assertNotNull(result);
         assertEquals(mockUser.getId(), result.getId());
         assertEquals(mockUser.getName(), result.getName());
@@ -60,16 +60,14 @@ class GetUserByIdUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Invalid ID")
     void execute_InvalidId_ThrowsUserException() {
         Long invalidId = 999L;
 
-        // Configuração dos mocks para ID inválido
         when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> getUserByIdUseCase.execute(invalidId));
 
-        // Verificações
         assertEquals("User not found", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verify(userRepository, times(1)).findById(invalidId);

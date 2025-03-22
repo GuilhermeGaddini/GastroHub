@@ -30,9 +30,8 @@ public class CreateRoleUseCase {
     @LogBean
     @Transactional
     public Role execute(CreateUpdateRoleRequest request) {
-        logger.info("Trying to create a new role with the following info: {}", request.getName());
-
         try {
+            logger.info("Trying to create a new role with the following info: {}", request.getName());
             Role role = modelMapper.map(request, Role.class);
             roleRepository.save(role);
             logger.info("New role created successfully");

@@ -6,6 +6,7 @@ import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.usecases.GetAllUsersUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Get All Users Use Case Test Class")
 class GetAllUsersUseCaseTest {
 
     @Mock
@@ -38,7 +40,6 @@ class GetAllUsersUseCaseTest {
     void setUp() {
         mockUsers = new ArrayList<>();
 
-        // Configurando usuários fictícios
         User user1 = new User();
         user1.setId(1L);
         user1.setName("John Doe");
@@ -54,11 +55,10 @@ class GetAllUsersUseCaseTest {
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ReturnsListOfUserResponses() {
-        // Configuração do mock para o método findAll
         when(userRepository.findAll()).thenReturn(mockUsers);
 
-        // Configuração do mock para o mapeamento do ModelMapper
         UserResponse userResponse1 = new UserResponse();
         userResponse1.setId(1L);
         userResponse1.setName("John Doe");
@@ -72,10 +72,8 @@ class GetAllUsersUseCaseTest {
         when(modelMapper.map(mockUsers.get(0), UserResponse.class)).thenReturn(userResponse1);
         when(modelMapper.map(mockUsers.get(1), UserResponse.class)).thenReturn(userResponse2);
 
-        // Execução do método
         List<UserResponse> result = getAllUsersUseCase.execute();
 
-        // Verificações
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("John Doe", result.get(0).getName());
@@ -85,14 +83,12 @@ class GetAllUsersUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Database error")
     void execute_ThrowsUserExceptionOnError() {
-        // Configuração do mock para lançar uma RuntimeException
         when(userRepository.findAll()).thenThrow(new RuntimeException("Database error"));
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> getAllUsersUseCase.execute());
 
-        // Verificações
         assertEquals("Error fetching users", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verify(userRepository, times(1)).findAll();

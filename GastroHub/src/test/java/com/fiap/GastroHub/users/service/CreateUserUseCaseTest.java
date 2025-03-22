@@ -8,6 +8,7 @@ import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
 import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.usecases.CreateUserUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,12 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Create User Use Case Test Class")
 class CreateUserUseCaseTest {
 
     @Mock
@@ -39,17 +39,15 @@ class CreateUserUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        // Configuração do DTO de entrada
         userRequest = UserTestHelper.generateCreateUpdateUserRequest();
 
-        // Configuração do mock da entidade User
         userEntity = UserTestHelper.generateUser(userRequest);
 
-        // Configuração do mock para o DTO de resposta
         userResponse = UserTestHelper.generateUserResponse(userEntity);
     }
 
     @Test
+    @DisplayName("Success")
     void execute_ValidRequest_CreatesAndReturnsUserResponse() {
         // Configuração dos mocks
         when(modelMapper.map(userRequest, User.class)).thenReturn(userEntity);
@@ -70,17 +68,53 @@ class CreateUserUseCaseTest {
     }
 
     @Test
+    @DisplayName("Error - Database error")
     void execute_SaveThrowsException_ThrowsUserException() {
-        // Configuração do mock para lançar uma exceção ao salvar
         when(modelMapper.map(userRequest, User.class)).thenReturn(userEntity);
         when(userRepository.save(userEntity)).thenThrow(new RuntimeException("Database error"));
 
-        // Execução do método e verificação da exceção
         UserException exception = assertThrows(UserException.class, () -> createUserUseCase.execute(userRequest));
 
         assertEquals("An unexpected error occurred while creating the user.", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verify(userRepository, times(1)).save(userEntity);
         verify(modelMapper, never()).map(any(User.class), eq(UserResponse.class));
+    }
+
+    @Test
+    @DisplayName("Error - User with existing email")
+    void execute_UserWithExistingEmail_ThrowsUserException() {
+        when(modelMapper.map(userRequest, User.class)).thenReturn(userEntity);
+        when(userRepository.save(userEntity)).thenThrow(new RuntimeException("Email already exists"));
+
+        UserException exception = assertThrows(UserException.class, () -> createUserUseCase.execute(userRequest));
+
+        assertEquals("An unexpected error occurred while creating the user.", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(userRepository, times(1)).save(userEntity);
+        verify(modelMapper, never()).map(any(User.class), eq(UserResponse.class));
+    }
+
+
+    @Test
+    @DisplayName("Error - Null User")
+    void execute_NullRequest_ThrowsUserException() {
+        UserException exception = assertThrows(UserException.class, () -> createUserUseCase.execute(null));
+
+        assertEquals("An unexpected error occurred while creating the user.", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Error - Exception during ModelMapper")
+    void execute_ModelMapperThrowsException_ThrowsUserException() {
+        when(modelMapper.map(userRequest, User.class)).thenThrow(new RuntimeException("Mapping error"));
+
+        UserException exception = assertThrows(UserException.class, () -> createUserUseCase.execute(userRequest));
+
+        assertEquals("An unexpected error occurred while creating the user.", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(userRepository, never()).save(any(User.class));
     }
 }

@@ -9,10 +9,7 @@ import com.fiap.GastroHub.modules.roles.infra.http.RoleController;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.usecases.*;
 import com.fiap.GastroHub.shared.exception.GlobalExceptionHandler;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -35,6 +32,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 @AutoConfigureMockMvc(addFilters = false)
+@DisplayName("Role Controller test Class")
 public class RoleControllerTest {
     private MockMvc mockMvc;
 
@@ -78,9 +76,11 @@ public class RoleControllerTest {
 
 
     @Nested
+    @DisplayName("Create cases")
     class CreateRole {
 
         @Test
+        @DisplayName("Create Role - Success")
         void createRole_success() throws Exception {
             CreateUpdateRoleRequest roleRequest = RoleTestHelper.generateCreateUpdateRoleRequest();
             Role role = RoleTestHelper.generateFullRole();
@@ -95,6 +95,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Create Role - Error - Blank Name")
         void createRole_exception_blankName() throws Exception {
             var roleRequest = new CreateUpdateRoleRequest();
             roleRequest.setName("");
@@ -111,6 +112,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Create Role - Error - Null Name")
         void createRole_exception_nullName() throws Exception{
             var roleRequest = new CreateUpdateRoleRequest();
             roleRequest.setName(null);
@@ -125,6 +127,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Create Role - Error - XML Payload")
         void createRole_exception_xmlPayload() throws Exception{
             String xmlPayload = "<role><id>2</id><name>admin_role</name></role>";
 
@@ -138,9 +141,11 @@ public class RoleControllerTest {
     }
 
     @Nested
+    @DisplayName("Get cases")
     class GetRoles {
 
         @Test
+        @DisplayName("Get all Cases")
         void getAllRoles_success() throws Exception {
             when(getAllRolesUseCase.execute()).thenReturn(List.of(RoleTestHelper.generateFullRole()));
 
@@ -156,6 +161,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Get Role By ID - Success")
         void getRoleById_success() throws Exception {
             Role role = RoleTestHelper.generateFullRole();
             when(getRoleByIdUseCase.execute(1L)).thenReturn(role);
@@ -172,6 +178,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Get Role By ID - Error - ID don't exist")
         void getRoleById_exception_idDontExist() throws Exception {
             when(getRoleByIdUseCase.execute(999L)).thenThrow(new RoleException("Role not found", HttpStatus.NOT_FOUND));
 
@@ -187,9 +194,11 @@ public class RoleControllerTest {
     }
 
     @Nested
+    @DisplayName("Update Cases")
     class UpdateRole {
 
         @Test
+        @DisplayName("Update - Success")
         void updateRole_success() throws Exception {
             CreateUpdateRoleRequest updatedRole = RoleTestHelper.generateCreateUpdateRoleRequest();
             Role role = RoleTestHelper.generateFullRole();
@@ -208,6 +217,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Update - Error - Blank Name")
         void updateRole_exception_blankName() throws Exception {
             CreateUpdateRoleRequest roleRequest = new CreateUpdateRoleRequest();
             roleRequest.setName("");
@@ -223,6 +233,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Update - Error - Null Name")
         void updateRole_exception_nullName() throws Exception {
             Role roleRequest = new Role();
             roleRequest.setName(null);
@@ -239,9 +250,11 @@ public class RoleControllerTest {
     }
 
     @Nested
+    @DisplayName("Delete Cases")
     class DeleteRole {
 
         @Test
+        @DisplayName("Delete - Success")
         void deleteRole_success() throws Exception {
             doNothing().when(deleteRoleUseCase).execute(1L);
 
@@ -254,6 +267,7 @@ public class RoleControllerTest {
         }
 
         @Test
+        @DisplayName("Delete - Error - ID don't exist")
         void deleteRole_exception_idDontExist() throws Exception {
             doThrow(new RoleException("Role not found", HttpStatus.NOT_FOUND))
                     .when(deleteRoleUseCase).execute(999L);
@@ -267,7 +281,6 @@ public class RoleControllerTest {
             verify(deleteRoleUseCase, times(1)).execute(999L);
         }
     }
-
 
     // Helper method
     private String asJsonString(final Object obj) {
