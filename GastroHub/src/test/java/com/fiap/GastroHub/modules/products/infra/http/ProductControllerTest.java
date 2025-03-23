@@ -172,7 +172,7 @@ public class ProductControllerTest {
     class UpdateProducts {
         @Test
         @DisplayName("Should update a product successfully")
-        void updateRole_success() throws Exception {
+        void updateProduct_success() throws Exception {
             CreateUpdateProductRequest updateProductRequest = new CreateUpdateProductRequest(
                     "Produto 1",
                     "Descrição do produto",

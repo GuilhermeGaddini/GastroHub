@@ -11,8 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class AssignRoleUseCase {
     private static final Logger logger = LogManager.getLogger(AssignRoleUseCase.class);
     private final RoleRepository roleRepository;

@@ -11,8 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UpdateProductUseCase {
     private static final Logger logger = LogManager.getLogger(UpdateProductUseCase.class);
     private final ProductRepository productRepository;
