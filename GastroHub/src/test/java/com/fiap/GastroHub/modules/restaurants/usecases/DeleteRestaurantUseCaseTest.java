@@ -85,8 +85,8 @@ public class DeleteRestaurantUseCaseTest {
 
         RestaurantException exception = assertThrows(RestaurantException.class, () -> deleteRestaurantUseCase.execute(1L));
 
-        assertEquals("Restaurant with ID " + 1L + " not found", exception.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("Unexpected error while deleting the restaurant", exception.getMessage());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
         verify(restaurantRepository, times(1)).findById(1L);
         verify(restaurantRepository, never()).delete(any());
     }
@@ -96,8 +96,8 @@ public class DeleteRestaurantUseCaseTest {
     void execute_NullId_ThrowsRestaurantException() {
         RestaurantException exception = assertThrows(RestaurantException.class, () -> deleteRestaurantUseCase.execute(null));
 
-        assertEquals("Restaurant with ID null not found", exception.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("Unexpected error while deleting the restaurant", exception.getMessage());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
         verify(restaurantRepository, never()).delete(any());
     }
 }

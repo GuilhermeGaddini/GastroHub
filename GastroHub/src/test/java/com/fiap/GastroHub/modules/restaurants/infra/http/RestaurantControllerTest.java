@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -281,6 +282,30 @@ public class RestaurantControllerTest {
                     .andExpect(jsonPath("$.message").value("Validation error"))
                     .andExpect(jsonPath("$.errors[0]").value("Owner ID is required"));
         }
+
+        @Test
+        @DisplayName("Should return 500 Internal Server Error when unexpected error occurs during creation")
+        void createRestaurant_internalServerError() throws Exception {
+            CreateUpdateRestaurantRequest createRequest = new CreateUpdateRestaurantRequest(
+                    "Restaurant Name",
+                    "Address",
+                    "Cuisine Type",
+                    "09h00 - 18h00",
+                    1L
+            );
+
+            // Simular lançamento da exceção personalizada durante o caso de uso
+            when(createRestaurantUseCase.execute(any(CreateUpdateRestaurantRequest.class)))
+                    .thenThrow(new RestaurantException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR));
+
+            mockMvc.perform(post("/restaurants/create").contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(createRequest)))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.message").value("Unexpected error"))
+                    .andDo(print());
+
+            verify(createRestaurantUseCase, times(1)).execute(any(CreateUpdateRestaurantRequest.class));
+        }
     }
 
     @Nested
@@ -486,6 +511,29 @@ public class RestaurantControllerTest {
                     .andExpect(jsonPath("$.message").value("Validation error"))
                     .andExpect(jsonPath("$.errors[0]").value("Owner ID is required"));
         }
+
+        @Test
+        @DisplayName("Should not update a restaurant and return 404 Not Found")
+        void updateRestaurant_restaurantNotFound() throws Exception {
+            CreateUpdateRestaurantRequest updateRequest = new CreateUpdateRestaurantRequest(
+                    "Restaurant Name",
+                    "Address",
+                    "Cuisine Type",
+                    "09h00 - 18h00",
+                    1L
+            );
+
+            when(updateRestaurantUseCase.execute(eq(1L), any(CreateUpdateRestaurantRequest.class)))
+                    .thenThrow(new RestaurantException("Restaurant not found", HttpStatus.NOT_FOUND));
+
+            mockMvc.perform(put("/restaurants/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
+                            .content(asJsonString(updateRequest)))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Restaurant not found"))
+                    .andDo(print());
+
+            verify(updateRestaurantUseCase, times(1)).execute(eq(1L), any(CreateUpdateRestaurantRequest.class));
+        }
     }
 
     @Nested
@@ -575,6 +623,21 @@ public class RestaurantControllerTest {
 
             verify(getRestaurantByIdUseCase, times(1)).execute(1L);
         }
+
+        @Test
+        @DisplayName("Should return 404 Not Found when getting a restaurant by ID that does not exist")
+        void getRestaurantById_notFound() throws Exception {
+            when(getRestaurantByIdUseCase.execute(eq(999L)))
+                    .thenThrow(new RestaurantException("Restaurant not found", HttpStatus.NOT_FOUND));
+
+            mockMvc.perform(get("/restaurants/{id}", 999L)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Restaurant not found"))
+                    .andDo(print());
+
+            verify(getRestaurantByIdUseCase, times(1)).execute(eq(999L));
+        }
     }
 
     @Nested
@@ -607,7 +670,59 @@ public class RestaurantControllerTest {
 
             verify(deleteRestaurantUseCase, times(1)).execute(999L);
         }
+
+        @Test
+        @DisplayName("Should return 500 Internal Server Error when unexpected error occurs during delete")
+        void deleteRestaurant_internalServerError() throws Exception {
+            doThrow(new RestaurantException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR))
+                    .when(deleteRestaurantUseCase).execute(eq(1L));
+
+            mockMvc.perform(delete("/restaurants/{id}", 1L)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.message").value("Unexpected error"))
+                    .andDo(print());
+
+            verify(deleteRestaurantUseCase, times(1)).execute(eq(1L));
+        }
+
     }
+
+    @Nested
+    @DisplayName("Get restaurant menu test cases")
+    class getRestaurantMenu{
+        @Test
+        @DisplayName("Should return 204 No Content if restaurant menu is empty")
+        void getRestaurantMenu_noContent() throws Exception {
+            when(getRestaurantMenuUseCase.execute(eq(1L))).thenReturn(List.of());
+
+            mockMvc.perform(get("/restaurants/{id}/menu", 1L)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNoContent())
+                    .andDo(print());
+
+            verify(getRestaurantMenuUseCase, times(1)).execute(eq(1L));
+        }
+
+        @Test
+        @DisplayName("Should return 404 Not Found if restaurant does not exist when retrieving menu")
+        void getRestaurantMenu_notFound() throws Exception {
+            when(getRestaurantMenuUseCase.execute(eq(999L)))
+                    .thenThrow(new RestaurantException("Restaurant not found", HttpStatus.NOT_FOUND));
+
+            mockMvc.perform(get("/restaurants/{id}/menu", 999L)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Restaurant not found"))
+                    .andDo(print());
+
+            verify(getRestaurantMenuUseCase, times(1)).execute(eq(999L));
+        }
+    }
+
+
+
+
 
     private String asJsonString(final Object obj) {
         try {

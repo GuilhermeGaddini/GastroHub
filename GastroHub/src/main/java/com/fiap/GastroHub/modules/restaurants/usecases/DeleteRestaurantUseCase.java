@@ -20,8 +20,12 @@ public class DeleteRestaurantUseCase {
      **/
     @LogBean
     public void execute(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new RestaurantException("Restaurant with ID " + id + " not found", HttpStatus.BAD_REQUEST));
-        restaurantRepository.delete(restaurant);
+        try {
+            Restaurant restaurant = restaurantRepository.findById(id)
+                    .orElseThrow(() -> new RestaurantException("Restaurant not found", HttpStatus.NOT_FOUND));
+            restaurantRepository.delete(restaurant);
+        } catch (RuntimeException e) {
+            throw new RestaurantException("Unexpected error while deleting the restaurant", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -29,7 +29,7 @@ public class GetAllRestaurantsUseCase {
             return restaurantRepository.findAll().stream()
                     .map(restaurant -> modelMapper.map(restaurant, RestaurantResponse.class))
                     .collect(Collectors.toList());
-        } catch (Error e) {
+        } catch (RuntimeException e) {
             throw new RestaurantException("Error fetching restaurants", HttpStatus.BAD_REQUEST);
         }
     }
