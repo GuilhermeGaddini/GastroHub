@@ -1,6 +1,5 @@
 package com.fiap.GastroHub.modules.users.usecases;
 
-import com.fiap.GastroHub.helper.UserTestHelper;
 import com.fiap.GastroHub.modules.users.dtos.UserResponse;
 import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;

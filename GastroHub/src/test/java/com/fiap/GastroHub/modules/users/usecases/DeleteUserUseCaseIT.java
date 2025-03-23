@@ -1,7 +1,6 @@
 package com.fiap.GastroHub.modules.users.usecases;
 
 import com.fiap.GastroHub.modules.users.exceptions.UserException;
-import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
