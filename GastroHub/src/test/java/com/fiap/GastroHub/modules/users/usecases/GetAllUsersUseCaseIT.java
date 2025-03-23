@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
+@Sql(scripts = {"/db_load.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = {"/db_clean.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ActiveProfiles("test")
 @DisplayName("Get All Users Use Case Integration Tests")
 public class GetAllUsersUseCaseIT {
@@ -61,8 +64,8 @@ public class GetAllUsersUseCaseIT {
         List<UserResponse> result = getAllUsersUseCase.execute();
 
         assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("John Doe", result.get(0).getName());
-        assertEquals("Jane Doe", result.get(1).getName());
+        assertEquals(4, result.size());
+        assertEquals("admin", result.get(0).getName());
+        assertEquals("Altair", result.get(1).getName());
     }
 }

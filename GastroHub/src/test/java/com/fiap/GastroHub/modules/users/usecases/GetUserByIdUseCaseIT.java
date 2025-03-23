@@ -13,12 +13,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
+@Sql(scripts = {"/db_load.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = {"/db_clean.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ActiveProfiles("test")
 @DisplayName("Get User By ID Use Case Integration Tests")
 public class GetUserByIdUseCaseIT {
@@ -31,10 +34,10 @@ public class GetUserByIdUseCaseIT {
     void setUp() {
         mockUser = new User();
         mockUser.setId(1L);
-        mockUser.setName("John Doe");
-        mockUser.setAddress("123 Main Street");
-        mockUser.setEmail("johndoe@example.com");
-        mockUser.setPassword("securepassword");
+        mockUser.setName("admin");
+        mockUser.setAddress(null);
+        mockUser.setEmail("admin@gastrohub.com");
+        mockUser.setPassword("swordfish");
     }
 
     @Test

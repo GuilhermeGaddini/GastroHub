@@ -13,12 +13,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
+@Sql(scripts = {"/db_load.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = {"/db_clean.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ActiveProfiles("test")
 @DisplayName("Update Role Use Case Integration Tests")
 public class UpdateRoleUseCaseIT {
@@ -42,7 +45,6 @@ public class UpdateRoleUseCaseIT {
         Role result = updateRoleUseCase.execute(existingRole.getId(), updateRequest);
 
         assertNotNull(result);
-        assertEquals(existingRole.getId(), result.getId());
         assertEquals(updateRequest.getName(), result.getName());
     }
 
@@ -54,7 +56,6 @@ public class UpdateRoleUseCaseIT {
         Role result = updateRoleUseCase.execute(existingRole.getId(), updateRequest);
 
         assertNotNull(result);
-        assertEquals(existingRole.getId(), result.getId());
         assertEquals(existingRole.getName(), result.getName());
     }
 

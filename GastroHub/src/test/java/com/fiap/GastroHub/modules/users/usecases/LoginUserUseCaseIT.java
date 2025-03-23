@@ -13,12 +13,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
+@Sql(scripts = {"/db_load.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = {"/db_clean.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @ActiveProfiles("test")
 @DisplayName("Login Use Case Integration Tests")
 public class LoginUserUseCaseIT {
@@ -36,13 +39,13 @@ public class LoginUserUseCaseIT {
     void setUp() {
         mockUser = new User();
         mockUser.setId(1L);
-        mockUser.setName("John Doe");
-        mockUser.setEmail("johndoe@example.com");
-        mockUser.setPassword("encryptedPassword");
+        mockUser.setName("admin");
+        mockUser.setEmail("admin@gastrohub.com");
+        mockUser.setPassword("swordfish");
 
         loginRequest = new LoginUserRequest();
-        loginRequest.setEmail("johndoe@example.com");
-        loginRequest.setPassword("encryptedPassword");
+        loginRequest.setEmail("admin@gastrohub.com");
+        loginRequest.setPassword("swordfish");
 
         token = jwtUtil.generateToken(mockUser.getId(), mockUser.getName(), mockUser.getEmail());
     }
@@ -59,6 +62,7 @@ public class LoginUserUseCaseIT {
     @Test
     @DisplayName("Error - User don't exist")
     void execute_UserNotFound_ThrowsUserException() {
+        loginRequest.setEmail("wrong@email.com");
         UserException exception = assertThrows(UserException.class, () -> loginUserUseCase.execute(loginRequest));
 
         assertEquals("Usuário ou senha inválidos", exception.getMessage());
