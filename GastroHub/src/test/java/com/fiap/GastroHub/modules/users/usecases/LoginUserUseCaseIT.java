@@ -3,37 +3,34 @@ package com.fiap.GastroHub.modules.users.usecases;
 import com.fiap.GastroHub.modules.users.dtos.LoginUserRequest;
 import com.fiap.GastroHub.modules.users.exceptions.UserException;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
-import com.fiap.GastroHub.modules.users.infra.orm.repositories.UserRepository;
 import com.fiap.GastroHub.modules.users.util.JwtUtil;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-
-import java.util.Optional;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-@DisplayName("Login Use Case Test Class")
-class LoginUserUseCaseTest {
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
+@ActiveProfiles("test")
+@DisplayName("Login Use Case Integration Tests")
+public class LoginUserUseCaseIT {
+    @Autowired
     private JwtUtil jwtUtil;
 
-    @InjectMocks
+    @Autowired
     private LoginUserUseCase loginUserUseCase;
 
     private User mockUser;
     private LoginUserRequest loginRequest;
+    String token;
 
     @BeforeEach
     void setUp() {
@@ -46,46 +43,35 @@ class LoginUserUseCaseTest {
         loginRequest = new LoginUserRequest();
         loginRequest.setEmail("johndoe@example.com");
         loginRequest.setPassword("encryptedPassword");
+
+        token = jwtUtil.generateToken(mockUser.getId(), mockUser.getName(), mockUser.getEmail());
     }
 
     @Test
     @DisplayName("Success")
     void execute_ValidCredentials_ReturnsJwtToken() {
-        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(mockUser));
-        when(jwtUtil.generateToken(mockUser.getId(), mockUser.getName(), mockUser.getEmail())).thenReturn("mockJwtToken");
-
         String result = loginUserUseCase.execute(loginRequest);
 
         assertNotNull(result);
-        assertEquals("mockJwtToken", result);
-        verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
-        verify(jwtUtil, times(1)).generateToken(mockUser.getId(), mockUser.getName(), mockUser.getEmail());
+        assertEquals(token, result);
     }
 
     @Test
-    @DisplayName("Error - User not found")
+    @DisplayName("Error - User don't exist")
     void execute_UserNotFound_ThrowsUserException() {
-        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.empty());
-
         UserException exception = assertThrows(UserException.class, () -> loginUserUseCase.execute(loginRequest));
 
         assertEquals("Usuário ou senha inválidos", exception.getMessage());
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
-        verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
-        verify(jwtUtil, never()).generateToken(anyLong(), anyString(), anyString());
     }
 
     @Test
-    @DisplayName("Error - Invalid password")
+    @DisplayName("Error - Wrong password")
     void execute_InvalidPassword_ThrowsUserException() {
         loginRequest.setPassword("wrongPassword");
-        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(mockUser));
-
         UserException exception = assertThrows(UserException.class, () -> loginUserUseCase.execute(loginRequest));
 
         assertEquals("Usuário ou senha inválidos", exception.getMessage());
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
-        verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
-        verify(jwtUtil, never()).generateToken(anyLong(), anyString(), anyString());
     }
 }

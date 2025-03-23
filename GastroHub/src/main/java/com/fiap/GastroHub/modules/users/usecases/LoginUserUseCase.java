@@ -33,7 +33,7 @@ public class LoginUserUseCase {
         logger.info("Iniciando o processo de login para o email: {}", loginUserRequest.getEmail());
 
         User user = userRepository.findByEmail(loginUserRequest.getEmail())
-                .orElseThrow(() -> new UserException("Usuário não encontrado", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new UserException("Usuário ou senha inválidos", HttpStatus.UNAUTHORIZED));
 
         logger.info("Usuário encontrado: {}", user.getName());
 
