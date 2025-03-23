@@ -3,8 +3,10 @@ package com.fiap.GastroHub.modules.restaurants.usecases;
 import com.fiap.GastroHub.modules.products.exceptions.ProductException;
 import com.fiap.GastroHub.modules.restaurants.dtos.CreateUpdateRestaurantRequest;
 import com.fiap.GastroHub.modules.restaurants.dtos.RestaurantResponse;
+import com.fiap.GastroHub.modules.restaurants.exceptions.RestaurantException;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
 import com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.RestaurantRepository;
+import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.users.dtos.UserResponse;
 import com.fiap.GastroHub.modules.users.infra.orm.entities.User;
@@ -136,10 +138,110 @@ public class GetAllRestaurantUseCaseTest {
     void execute_ThrowsRestaurantExceptionOnError() {
         when(restaurantRepository.findAll()).thenThrow(new ProductException("Error fetching restaurants", HttpStatus.BAD_REQUEST));
 
-        ProductException exception = assertThrows(ProductException.class, () -> getAllRestaurantsUseCase.execute());
+        RestaurantException exception = assertThrows(RestaurantException.class, () -> getAllRestaurantsUseCase.execute());
 
         assertEquals("Error fetching restaurants", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(restaurantRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Success - Empty Restaurant List")
+    void execute_ReturnsEmptyListWhenNoRestaurantsExist() {
+        when(restaurantRepository.findAll()).thenReturn(List.of());
+
+        List<RestaurantResponse> result = getAllRestaurantsUseCase.execute();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(restaurantRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Error - ModelMapper Throws Exception")
+    void execute_ModelMapperThrowsException() {
+        // Configurando um restaurante válido
+        Restaurant restaurant = Restaurant.builder()
+                .id(1L)
+                .name("Restaurant Name")
+                .address("Restaurant Address")
+                .cuisineType("Restaurant CuisineType")
+                .openingHours("Restaurant OpeningHours")
+                .owner(User.builder()
+                        .id(1L)
+                        .name("Owner")
+                        .email("owner@email.com")
+                        .build())
+                .build();
+
+        when(restaurantRepository.findAll()).thenReturn(List.of(restaurant));
+
+        doThrow(new RuntimeException("Error mapping restaurant"))
+                .when(modelMapper).map(any(Restaurant.class), eq(RestaurantResponse.class));
+
+        RestaurantException exception = assertThrows(RestaurantException.class, () -> getAllRestaurantsUseCase.execute());
+
+        assertEquals("Error fetching restaurants", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        verify(restaurantRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Success - Multiple Restaurants with Different Owners")
+    void execute_ReturnsListWithMultipleRestaurantsAndOwners() {
+        Role ownerRole = Role.builder()
+                .id(1L)
+                .name("Owner")
+                .build();
+
+        User owner1 = User.builder()
+                .id(1L)
+                .name("Owner 1")
+                .email("owner1@email.com")
+                .role(ownerRole)
+                .build();
+
+        User owner2 = User.builder()
+                .id(2L)
+                .name("Owner 2")
+                .email("owner2@email.com")
+                .role(ownerRole)
+                .build();
+
+        Restaurant restaurant1 = Restaurant.builder()
+                .id(1L)
+                .name("Restaurant 1")
+                .address("Address 1")
+                .cuisineType("Cuisine 1")
+                .openingHours("09h00 - 18h00")
+                .owner(owner1)
+                .build();
+
+        Restaurant restaurant2 = Restaurant.builder()
+                .id(2L)
+                .name("Restaurant 2")
+                .address("Address 2")
+                .cuisineType("Cuisine 2")
+                .openingHours("10h00 - 20h00")
+                .owner(owner2)
+                .build();
+
+        RestaurantResponse response1 = new RestaurantResponse(1L, "Restaurant 1", "Address 1", "Cuisine 1", "09h00 - 18h00",
+                new UserResponse(owner1.getId(), owner1.getName(), owner1.getEmail(), owner1.getAddress(), LocalDateTime.now(), LocalDateTime.now()));
+        RestaurantResponse response2 = new RestaurantResponse(2L, "Restaurant 2", "Address 2", "Cuisine 2", "10h00 - 20h00",
+                new UserResponse(owner2.getId(), owner2.getName(), owner2.getEmail(), owner2.getAddress(), LocalDateTime.now(), LocalDateTime.now()));
+
+        doReturn(response1).when(modelMapper).map(restaurant1, RestaurantResponse.class);
+        doReturn(response2).when(modelMapper).map(restaurant2, RestaurantResponse.class);
+
+        when(restaurantRepository.findAll()).thenReturn(List.of(restaurant1, restaurant2));
+
+        List<RestaurantResponse> result = getAllRestaurantsUseCase.execute();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("Restaurant 1", result.get(0).getName());
+        assertEquals("Restaurant 2", result.get(1).getName());
         verify(restaurantRepository, times(1)).findAll();
     }
 }
