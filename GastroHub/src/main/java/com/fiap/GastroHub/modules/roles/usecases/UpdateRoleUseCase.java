@@ -35,11 +35,15 @@ public class UpdateRoleUseCase {
     @LogBean
     public Role execute(Long id, CreateUpdateRoleRequest request) {
         logger.info("Trying to update a role with the following id: {}", id);
+        Role role;
+        try {
+            role = roleRepository.findById(id)
+                    .orElseThrow(() -> new RoleException("Role not found", HttpStatus.NOT_FOUND));
+            role.setName(request.getName());
+        } catch (Exception e){
+            throw new RoleException("Role not found", HttpStatus.NOT_FOUND);
+        }
 
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RoleException("Role not found", HttpStatus.NOT_FOUND));
-
-        role.setName(request.getName());
 
         role = roleRepository.save(role);
         return role;

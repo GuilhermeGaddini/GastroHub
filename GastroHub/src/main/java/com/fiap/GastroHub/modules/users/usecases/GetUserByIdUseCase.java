@@ -24,9 +24,13 @@ public class GetUserByIdUseCase {
      **/
     @LogBean
     public UserResponse execute(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserException("User not found", HttpStatus.BAD_REQUEST));
-        return modelMapper.map(user, UserResponse.class);
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new UserException("User not found", HttpStatus.BAD_REQUEST));
+            return modelMapper.map(user, UserResponse.class);
+        } catch (Exception e) {
+            throw new UserException("User not found", HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

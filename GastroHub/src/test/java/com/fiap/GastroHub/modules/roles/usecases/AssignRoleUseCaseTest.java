@@ -49,7 +49,7 @@ class AssignRoleUseCaseTest {
         role.setName("Admin");
 
         User user = new User();
-        user.setId(2L);
+        user.setId(1L);
         user.setRole(null);
 
         when(roleRepository.findById(request.getRoleId())).thenReturn(Optional.of(role));

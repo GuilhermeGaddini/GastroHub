@@ -69,8 +69,8 @@ class LoginUserUseCaseTest {
 
         UserException exception = assertThrows(UserException.class, () -> loginUserUseCase.execute(loginRequest));
 
-        assertEquals("Usuário não encontrado", exception.getMessage());
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Usuário ou senha inválidos", exception.getMessage());
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         verify(userRepository, times(1)).findByEmail(loginRequest.getEmail());
         verify(jwtUtil, never()).generateToken(anyLong(), anyString(), anyString());
     }
