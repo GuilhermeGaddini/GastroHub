@@ -20,8 +20,15 @@ public class DeleteRoleUseCase {
      **/
     @LogBean
     public void execute(Long id) {
+        if (id == null) { throw new RoleException("Role with ID null not allowed", HttpStatus.BAD_REQUEST); }
+
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RoleException("Role with ID " + id + " not found", HttpStatus.BAD_REQUEST));
-        roleRepository.delete(role);
+
+        try {
+            roleRepository.delete(role);
+        } catch (Exception e) {
+            throw new RoleException("Error Deleting role", HttpStatus.BAD_REQUEST);
+        }
     }
 }
