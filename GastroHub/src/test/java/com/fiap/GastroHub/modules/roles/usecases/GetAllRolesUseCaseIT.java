@@ -41,7 +41,7 @@ public class GetAllRolesUseCaseIT {
         List<Role> result = getAllRolesUseCase.execute();
 
         assertNotNull(result);
-        assertEquals(3, result.size());
+        assertEquals(4, result.size());
         assertEquals("Admin", result.get(0).getName());
     }
 }

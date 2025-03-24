@@ -2,7 +2,8 @@
 INSERT INTO `roles` VALUES
     (1,'Admin'),
     (2,'Cliente'),
-    (3,'Dono');
+    (3,'Dono'),
+    (4, 'teste');
 
 INSERT INTO `users` VALUES
     (1,'',NULL,'admin@gastrohub.com',NULL,'admin','swordfish',1),
@@ -11,7 +12,7 @@ INSERT INTO `users` VALUES
     (4,'Rua dos jasmins, 85',NULL,'romeu@padariadoromeu.com',NULL,'romeu','boasenha',3);
 
 INSERT INTO `restaurants` VALUES
-    (1,'Rua dos jasmins, 85','Padaria','Padaria do Romeu','6 as 18 horas',4);
+    (1,'Rua dos jasmins, 85','Padaria','Padaria do Romeu','6 as 18 horas',3);
 
 INSERT INTO `products` VALUES
     (1,'No local','Pao frances 50g','Pao frances','c:\\gastrohub\\pao.png',1.56,1),
