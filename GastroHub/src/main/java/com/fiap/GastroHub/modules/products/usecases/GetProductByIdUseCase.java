@@ -8,9 +8,9 @@ import com.fiap.GastroHub.shared.infra.beans.LogBean;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class GetProductByIdUseCase {
     private final ProductRepository productRepository;

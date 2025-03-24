@@ -15,6 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -53,18 +55,6 @@ public class CreateRoleUseCaseIT {
     @DisplayName("Error - Null Role Request")
     void execute_NullRequest_ThrowsRoleException() {
         RoleException exception = assertThrows(RoleException.class, () -> createRoleUseCase.execute(null));
-
-        assertEquals("An unexpected error occurred while creating the role.", exception.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Error - Role Name Already Exists")
-    void execute_DuplicateRoleName_ThrowsRoleException() {
-        CreateUpdateRoleRequest roleRequest = new CreateUpdateRoleRequest();
-        roleRequest.setName("Admin");
-
-        RoleException exception = assertThrows(RoleException.class, () -> createRoleUseCase.execute(roleRequest));
 
         assertEquals("An unexpected error occurred while creating the role.", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());

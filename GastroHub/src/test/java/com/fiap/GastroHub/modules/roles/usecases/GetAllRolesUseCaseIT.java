@@ -1,6 +1,5 @@
 package com.fiap.GastroHub.modules.roles.usecases;
 
-import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
 import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import jakarta.transaction.Transactional;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 

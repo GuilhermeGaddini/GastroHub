@@ -3,7 +3,6 @@ package com.fiap.GastroHub.modules.roles.usecases;
 import com.fiap.GastroHub.modules.roles.dtos.CreateUpdateRoleRequest;
 import com.fiap.GastroHub.modules.roles.exceptions.RoleException;
 import com.fiap.GastroHub.modules.roles.infra.orm.entities.Role;
-import com.fiap.GastroHub.modules.roles.infra.orm.repositories.RoleRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

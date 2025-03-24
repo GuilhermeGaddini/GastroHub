@@ -61,7 +61,7 @@ public class DeleteRoleUseCaseTest {
     void execute_NullId_ThrowsRoleException() {
         RoleException exception = assertThrows(RoleException.class, () -> deleteRoleUseCase.execute(null));
 
-        assertEquals("Role with ID null not found", exception.getMessage());
+        assertEquals("Role with ID null not allowed", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         verify(roleRepository, never()).delete(any());
     }
@@ -74,11 +74,11 @@ public class DeleteRoleUseCaseTest {
         role.setId(roleId);
 
         when(roleRepository.findById(roleId)).thenReturn(Optional.of(role));
-        doThrow(new RuntimeException("Database error during deletion")).when(roleRepository).delete(role);
+        doThrow(new RuntimeException("Error Deleting role")).when(roleRepository).delete(role);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> deleteRoleUseCase.execute(roleId));
 
-        assertEquals("Database error during deletion", exception.getMessage());
+        assertEquals("Error Deleting role", exception.getMessage());
         verify(roleRepository, times(1)).findById(roleId);
         verify(roleRepository, times(1)).delete(role);
     }

@@ -1,20 +1,11 @@
-package com.fiap.GastroHub.modules.restaurants.infra.orm.repositories.entities;
+package com.fiap.GastroHub.modules.restaurants.infra.orm.entities;
 
-import com.fiap.GastroHub.modules.restaurants.infra.orm.entities.Restaurant;
-import com.google.code.beanmatchers.BeanMatchers;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RestaurantTest {
-
-//    @Test
-//    void testRestaurantEntity() {
-//        assertThat(Restaurant.class, BeanMatchers.hasValidBeanConstructor());
-//        assertThat(Restaurant.class, BeanMatchers.hasValidGettersAndSetters());
-//    }
 
     @Test
     void testEntityGettersAndSetters() {
