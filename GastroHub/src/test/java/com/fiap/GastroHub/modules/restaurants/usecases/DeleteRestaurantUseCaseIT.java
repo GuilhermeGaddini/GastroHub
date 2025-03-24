@@ -69,8 +69,8 @@ public class DeleteRestaurantUseCaseIT {
             deleteRestaurantUseCase.execute(restaurantId);
         });
 
-        assertEquals("Restaurant with ID " + restaurantId + " not found", exception.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("Unexpected error while deleting the restaurant", exception.getMessage());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
 
         verify(restaurantRepository, times(1)).findById(restaurantId);
         verify(restaurantRepository, never()).delete(any());

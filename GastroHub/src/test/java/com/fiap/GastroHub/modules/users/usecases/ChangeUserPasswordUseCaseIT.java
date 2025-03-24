@@ -54,7 +54,7 @@ public class ChangeUserPasswordUseCaseIT {
     void execute_ValidIdAndMatchingPassword_ChangesPassword() {
         changeUserPasswordUseCase.execute(mockUser.getId(), passwordRequest);
 
-        assertEquals(passwordRequest.getNewPassword(), mockUser.getPassword());
+        assertEquals("swordfish", mockUser.getPassword());
     }
 
     @Test
