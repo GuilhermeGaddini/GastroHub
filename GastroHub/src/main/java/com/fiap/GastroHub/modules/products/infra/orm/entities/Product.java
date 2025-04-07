@@ -26,13 +26,14 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String availability;
 
     @Column(nullable = false)
     private String picPath;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    // @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="restaurant_id")
     private Restaurant restaurant;
 }
